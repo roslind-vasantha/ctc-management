@@ -14,8 +14,8 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const variantClasses: Record<ButtonVariant, string> = {
-  primary: 'bg-[var(--foreground)] text-[var(--background)] hover:opacity-90',
-  secondary: 'bg-[var(--muted)] text-[var(--text-color)] hover:bg-[var(--border)]',
+  primary: 'bg-[#4A90E2] text-white hover:bg-[#3A7BC8] shadow-sm',
+  secondary: 'bg-white text-[#4A90E2] border-2 border-[#4A90E2] hover:bg-[#F0F7FF]',
   ghost: 'bg-transparent text-[var(--text-color)] hover:bg-[var(--muted)]',
   destructive: 'bg-[var(--danger-bg)] text-[var(--danger-text)] hover:opacity-90',
 };
@@ -40,7 +40,7 @@ export const Button = ({
   return (
     <button
       className={`
-        inline-flex items-center justify-center gap-2 rounded-lg font-medium
+        inline-flex items-center justify-center gap-2 rounded-xl font-medium
         transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed
         ${variantClasses[variant]} ${sizeClasses[size]}
         ${fullWidth ? 'w-full' : ''}

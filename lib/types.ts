@@ -7,10 +7,23 @@ export type Distributor = {
   name: string;
   email: string;
   phone: string;
-  region: string;
+  region?: string;
   kycStatus: 'verified' | 'pending' | 'rejected';
+  // KYC Documents
+  aadhaarDoc?: string;
+  panDoc?: string;
+  // KYB Details
+  businessName?: string;
+  gstNumber?: string;
+  businessPan?: string;
+  // Commission
+  commissionType: 'fixed' | 'percentage';
+  commissionValue: number;
+  // Legacy fields (for backward compatibility)
   commissionRateFixed: number;
   commissionRatePercent: number;
+  // Agreement
+  agreementDoc?: string;
   monthVolume: number;
   monthGmv: number;
   createdAt: string;
@@ -23,8 +36,20 @@ export type Retailer = {
   name: string;
   email: string;
   phone: string;
-  city: string;
+  city?: string;
   kycStatus: 'verified' | 'pending' | 'rejected';
+  // KYC Documents
+  aadhaarDoc?: string;
+  panDoc?: string;
+  // KYB Details
+  businessName?: string;
+  gstNumber?: string;
+  businessPan?: string;
+  // Commission
+  commissionType: 'fixed' | 'percentage';
+  commissionValue: number;
+  // Agreement
+  agreementDoc?: string;
   monthVolume: number;
   monthGmv: number;
   createdAt: string;
@@ -34,12 +59,12 @@ export type Retailer = {
 export type Customer = {
   id: ID;
   retailerId: ID;
-  name: string;
-  email: string;
+  name: string; // Name as per Aadhaar
+  email?: string;
   phone: string;
-  cardLast4: string;
-  cardBrand: 'VISA' | 'MASTERCARD' | 'AMEX' | 'RUPAY';
-  kycStatus: 'verified' | 'pending' | 'rejected';
+  cardLast4?: string;
+  cardBrand?: 'VISA' | 'MASTERCARD' | 'AMEX' | 'RUPAY';
+  kycStatus?: 'verified' | 'pending' | 'rejected';
   createdAt: string;
   active: boolean;
 };
