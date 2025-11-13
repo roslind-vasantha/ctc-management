@@ -2,31 +2,39 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-  --text-color: #171717;
-  --muted: #e5e7eb;
+  /* Base */
+  --background: #f9fafb; /* calm neutral white-gray */
+  --foreground: #2563eb; /* near-black for crisp contrast */
+  --text-color: #0a0f0d;
+  --muted: #e2e8f0;
   --muted-foreground: #6b7280;
   --border: #e5e7eb;
   --card-bg: #ffffff;
   --input-bg: #ffffff;
 
-  --success-bg: #dcfce7;
-  --success-text: #166534;
-  --success-border: #86efac;
+  /* Brand Core */
+  --primary: #1a73e8; /* Outlook-style blue for main buttons */
+  --primary-accent: #4795f0; /* lighter hover/action tone */
+  --accent: #2563eb; /* vibrant blue for focus/active states */
 
-  --warning-bg: #fef3c7;
+  /* Semantic Colors */
+  --success-bg: #e6f9ee;
+  --success-text: #166534;
+  --success-border: #82d4a3;
+
+  --warning-bg: #fff9e6;
   --warning-text: #92400e;
   --warning-border: #fcd34d;
 
-  --danger-bg: #fee2e2;
+  --danger-bg: #ffeaea;
   --danger-text: #991b1b;
-  --danger-border: #fca5a5;
+  --danger-border: #f87171;
 
-  --info-bg: #dbeafe;
+  --info-bg: #e6f0ff;
   --info-text: #1e40af;
   --info-border: #93c5fd;
 
+  /* Breakpoints */
   --breakpoint-tablet: 768px;
   --breakpoint-desktop: 1024px;
 }
@@ -36,40 +44,10 @@
   --color-foreground: var(--foreground);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-    --text-color: #ededed;
-    --muted: #374151;
-    --muted-foreground: #9ca3af;
-    --border: #374151;
-    --card-bg: #1a1a1a;
-    --input-bg: #1a1a1a;
-
-    --success-bg: #14532d;
-    --success-text: #86efac;
-    --success-border: #166534;
-
-    --warning-bg: #78350f;
-    --warning-text: #fcd34d;
-    --warning-border: #92400e;
-
-    --danger-bg: #7f1d1d;
-    --danger-text: #fca5a5;
-    --danger-border: #991b1b;
-
-    --info-bg: #1e3a8a;
-    --info-text: #93c5fd;
-    --info-border: #1e40af;
-  }
-}
-
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
-    sans-serif;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
