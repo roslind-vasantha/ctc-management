@@ -2,6 +2,8 @@ export type ID = string;
 
 export type Role = 'management' | 'distributor' | 'retailer' | 'customer';
 
+export type OnboardingState = 'pending' | 'submitted';
+
 export type Distributor = {
   id: ID;
   name: string;
@@ -15,6 +17,7 @@ export type Distributor = {
   monthGmv: number;
   createdAt: string;
   active: boolean;
+  onboardingState: OnboardingState;
 };
 
 export type Retailer = {
@@ -29,6 +32,19 @@ export type Retailer = {
   monthGmv: number;
   createdAt: string;
   active: boolean;
+  onboardingState: OnboardingState;
+  // KYC Documents
+  aadhaarDocument?: string;
+  panDocument?: string;
+  // KYB (Know Your Business)
+  businessName?: string;
+  gstNumber?: string;
+  businessPan?: string;
+  // Commission
+  commissionType?: 'fixed' | 'percentage';
+  commissionAmount?: number;
+  // Agreement
+  agreementDocument?: string;
 };
 
 export type Customer = {
@@ -42,6 +58,16 @@ export type Customer = {
   kycStatus: 'verified' | 'pending' | 'rejected';
   createdAt: string;
   active: boolean;
+  onboardingState: OnboardingState;
+  // Personal Information
+  dateOfBirth?: string;
+  // Employment Details
+  companyName?: string;
+  designation?: string;
+  salaryPerAnnum?: number;
+  // Document Verification
+  aadhaarDocument?: string;
+  panDocument?: string;
 };
 
 export type CommissionRule = {

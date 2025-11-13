@@ -17,6 +17,7 @@ type DataTableProps<T> = {
   defaultPageSize?: number;
   compact?: boolean;
   onRowClick?: (row: T) => void;
+  enableExport?: boolean;
 };
 
 export const DataTable = <T extends Record<string, any>>({
@@ -27,6 +28,7 @@ export const DataTable = <T extends Record<string, any>>({
   defaultPageSize = 10,
   compact = false,
   onRowClick,
+  enableExport = true,
 }: DataTableProps<T>) => {
   const [searchText, setSearchText] = useState('');
   const [sortField, setSortField] = useState<keyof T | null>(null);
@@ -147,14 +149,16 @@ export const DataTable = <T extends Record<string, any>>({
         ))}
         
         {/* Export */}
-        <Button
-          variant="secondary"
-          size="sm"
-          icon={Download}
-          onClick={handleExportCSV}
-        >
-          Export CSV
-        </Button>
+        {enableExport && (
+          <Button
+            variant="secondary"
+            size="sm"
+            icon={Download}
+            onClick={handleExportCSV}
+          >
+            Export CSV
+          </Button>
+        )}
       </div>
       
       {/* Table */}
