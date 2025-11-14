@@ -169,24 +169,26 @@ export default function ProfileManagementPage() {
   };
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold text-[var(--text-color)] mb-2">Profile Management</h1>
-        <p className="text-[var(--muted-foreground)]">
-          Search, filter, inspect, and edit profiles across all user types
-        </p>
-      </div>
+    <div className="min-h-screen bg-[#F5F6FA] p-8">
+      <div className="max-w-7xl mx-auto space-y-6">
+        {/* Header */}
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Profile Management</h1>
+          <p className="text-gray-600">
+            Search, filter, inspect, and edit profiles across all user types
+          </p>
+        </div>
 
-      {/* Profile Table */}
-      <ProfileTable
-        profiles={profiles}
-        onRowClick={handleRowClick}
-        onParentClick={handleParentClick}
-        onBulkSuspend={handleBulkSuspend}
-        onBulkActivate={handleBulkActivate}
-        onExportCSV={handleExportCSV}
-      />
+        {/* Profile Table */}
+        <ProfileTable
+          profiles={profiles}
+          onRowClick={handleRowClick}
+          onParentClick={handleParentClick}
+          onBulkSuspend={handleBulkSuspend}
+          onBulkActivate={handleBulkActivate}
+          onExportCSV={handleExportCSV}
+        />
+      </div>
     </div>
   );
 }

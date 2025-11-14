@@ -185,13 +185,14 @@ export default function TransactionsPage() {
   ];
   
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold text-[var(--text-color)] mb-2">Transactions</h1>
-        <p className="text-[var(--muted-foreground)]">
-          Monitor and manage all card-to-cash transactions
-        </p>
-      </div>
+    <div className="min-h-screen bg-[#F5F6FA] p-8">
+      <div className="max-w-7xl mx-auto space-y-6">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Transactions</h1>
+          <p className="text-gray-600">
+            Monitor and manage all card-to-cash transactions
+          </p>
+        </div>
       
       {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -540,6 +541,7 @@ export default function TransactionsPage() {
           </div>
         </Modal>
       )}
+      </div>
     </div>
   );
 }

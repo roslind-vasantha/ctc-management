@@ -204,56 +204,57 @@ export default function CommissionManagementPage() {
   ];
   
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-[var(--text-color)] mb-2">
-            Commission Management
-          </h1>
-          <p className="text-[var(--muted-foreground)]">
-            Create and manage commission rules for distributors
-          </p>
+    <div className="min-h-screen bg-[#F5F6FA] p-8">
+      <div className="max-w-7xl mx-auto space-y-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+              Commission Management
+            </h1>
+            <p className="text-gray-600">
+              Create and manage commission rules for distributors
+            </p>
+          </div>
+          <div className="flex gap-3">
+            <Button
+              variant="secondary"
+              icon={Calculator}
+              onClick={() => setShowSimulator(true)}
+            >
+              Simulator
+            </Button>
+            <Button
+              icon={Plus}
+              onClick={() => {
+                setEditingRule(null);
+                resetForm();
+                setIsModalOpen(true);
+              }}
+            >
+              Create Rule
+            </Button>
+          </div>
         </div>
-        <div className="flex gap-3">
-          <Button
-            variant="secondary"
-            icon={Calculator}
-            onClick={() => setShowSimulator(true)}
-          >
-            Simulator
-          </Button>
-          <Button
-            icon={Plus}
-            onClick={() => {
-              setEditingRule(null);
-              resetForm();
-              setIsModalOpen(true);
-            }}
-          >
-            Create Rule
-          </Button>
-        </div>
-      </div>
-      
-      {/* Rules Table */}
-      <Card>
-        <DataTable
-          columns={columns}
-          rows={commissionRules}
-          searchKeys={['name', 'id']}
-          filters={[
-            {
-              key: 'active',
-              label: 'Status',
-              options: [
-                { value: 'true', label: 'Active' },
-                { value: 'false', label: 'Inactive' },
-              ],
-            },
-          ]}
-          defaultPageSize={10}
-        />
-      </Card>
+
+        {/* Rules Table */}
+        <Card>
+          <DataTable
+            columns={columns}
+            rows={commissionRules}
+            searchKeys={['name', 'id']}
+            filters={[
+              {
+                key: 'active',
+                label: 'Status',
+                options: [
+                  { value: 'true', label: 'Active' },
+                  { value: 'false', label: 'Inactive' },
+                ],
+              },
+            ]}
+            defaultPageSize={10}
+          />
+        </Card>
       
       {/* Create/Edit Modal */}
       <Modal
@@ -458,6 +459,7 @@ export default function CommissionManagementPage() {
           )}
         </div>
       </Modal>
+      </div>
     </div>
   );
 }

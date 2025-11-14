@@ -111,76 +111,80 @@ export const ProfileTable = ({
     search || typeFilter !== 'All' || statusFilter !== 'All' || kycFilter !== 'All';
 
   return (
-    <div className="space-y-4">
-      {/* Search */}
-      <div className="relative">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--muted-foreground)]" size={18} />
-        <input
-          type="text"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search by Name, Phone, or Email..."
-          className="w-full pl-10 pr-10 py-3 border border-[var(--border)] rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#3B82F6]"
-        />
-        {search && (
-          <button
-            onClick={() => setSearch('')}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--muted-foreground)] hover:text-[var(--text-color)]"
+    <div className="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm">
+      {/* Header with Search and Filters */}
+      <div className="px-6 py-4 bg-gray-50 border-b border-gray-200">
+        <div className="flex items-center justify-between gap-4 mb-4">
+          {/* Search */}
+          <div className="relative flex-1 max-w-md">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search by Name, Phone, or Email..."
+              className="w-full pl-9 pr-10 py-1.5 text-sm border border-gray-300 rounded bg-white focus:outline-none focus:ring-1 focus:ring-gray-400 focus:border-gray-400"
+            />
+            {search && (
+              <button
+                onClick={() => setSearch('')}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+              >
+                <X size={16} />
+              </button>
+            )}
+          </div>
+
+          {/* Export Button */}
+          <Button
+            variant="secondary"
+            size="sm"
+            icon={Download}
+            onClick={() => onExportCSV(filteredProfiles)}
           >
-            <X size={18} />
-          </button>
-        )}
-      </div>
+            Export
+          </Button>
+        </div>
 
-      {/* Filters */}
-      <div className="flex flex-wrap items-center gap-3">
-        <select
-          value={typeFilter}
-          onChange={(e) => setTypeFilter(e.target.value as any)}
-          className="px-3 py-2 border border-[var(--border)] rounded-lg text-sm bg-white"
-        >
-          <option value="All">User Type</option>
-          <option value="Distributor">Distributor</option>
-          <option value="Retailer">Retailer</option>
-          <option value="Customer">Customer</option>
-        </select>
-
-        <select
-          value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value as any)}
-          className="px-3 py-2 border border-[var(--border)] rounded-lg text-sm bg-white"
-        >
-          <option value="All">Status</option>
-          <option value="Active">Active</option>
-          <option value="Suspended">Suspended</option>
-          <option value="Pending KYC">Pending KYC</option>
-        </select>
-
-        <select
-          value={kycFilter === null ? 'None' : kycFilter}
-          onChange={(e) => setKycFilter(e.target.value === 'None' ? null : (e.target.value as any))}
-          className="px-3 py-2 border border-[var(--border)] rounded-lg text-sm bg-white"
-        >
-          <option value="All">KYC</option>
-          <option value="Verified">Verified</option>
-          <option value="Pending">Pending</option>
-          <option value="None">None</option>
-        </select>
-
-        {hasActiveFilters && (
-          <button
-            onClick={clearFilters}
-            className="text-sm text-[#3B82F6] hover:underline"
+        {/* Filters */}
+        <div className="flex flex-wrap items-center gap-2">
+          <select
+            value={typeFilter}
+            onChange={(e) => setTypeFilter(e.target.value as any)}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-gray-700 bg-white border border-gray-300 rounded hover:bg-gray-50 transition-colors"
           >
-            Clear All
-          </button>
-        )}
+            <option value="All">User Type</option>
+            <option value="Distributor">Distributor</option>
+            <option value="Retailer">Retailer</option>
+            <option value="Customer">Customer</option>
+          </select>
 
-        <div className="ml-auto flex items-center gap-3">
+          <select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value as any)}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-gray-700 bg-white border border-gray-300 rounded hover:bg-gray-50 transition-colors"
+          >
+            <option value="All">Status</option>
+            <option value="Active">Active</option>
+            <option value="Suspended">Suspended</option>
+            <option value="Pending KYC">Pending KYC</option>
+          </select>
+
+          <select
+            value={kycFilter === null ? 'None' : kycFilter}
+            onChange={(e) => setKycFilter(e.target.value === 'None' ? null : (e.target.value as any))}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-gray-700 bg-white border border-gray-300 rounded hover:bg-gray-50 transition-colors"
+          >
+            <option value="All">KYC</option>
+            <option value="Verified">Verified</option>
+            <option value="Pending">Pending</option>
+            <option value="None">None</option>
+          </select>
+
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value as any)}
-            className="px-3 py-2 border border-[var(--border)] rounded-lg text-sm bg-white"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-gray-700 bg-white border border-gray-300 rounded hover:bg-gray-50 transition-colors"
           >
             <option value="created">Created</option>
             <option value="name">Name (A-Z)</option>
@@ -189,17 +193,26 @@ export const ProfileTable = ({
 
           <button
             onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
-            className="px-3 py-2 border border-[var(--border)] rounded-lg text-sm hover:bg-[var(--muted)]"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-gray-700 bg-white border border-gray-300 rounded hover:bg-gray-50 transition-colors"
           >
             {sortOrder === 'asc' ? '↑' : '↓'}
           </button>
+
+          {hasActiveFilters && (
+            <button
+              onClick={clearFilters}
+              className="text-xs text-gray-600 hover:text-gray-900 hover:underline ml-2"
+            >
+              Clear All
+            </button>
+          )}
         </div>
       </div>
 
       {/* Bulk Actions */}
       {selectedIds.size > 0 && (
-        <div className="bg-[#F0F7FF] border border-[#3B82F6] rounded-xl p-4 flex items-center justify-between">
-          <span className="text-sm font-medium text-[var(--text-color)]">
+        <div className="px-6 py-3 bg-blue-50 border-b border-blue-100 flex items-center justify-between">
+          <span className="text-sm font-medium text-gray-900">
             {selectedIds.size} selected
           </span>
           <div className="flex items-center gap-2">
@@ -224,11 +237,11 @@ export const ProfileTable = ({
       {/* Table */}
       {paginatedProfiles.length > 0 ? (
         <>
-          <div className="border border-[var(--border)] rounded-xl overflow-hidden">
+          <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-[var(--muted)] border-b border-[var(--border)]">
-                <tr>
-                  <th className="px-4 py-3 text-center w-12">
+              <thead>
+                <tr className="border-b border-gray-200">
+                  <th className="px-6 py-3 text-center w-12">
                     <input
                       type="checkbox"
                       checked={
@@ -236,77 +249,71 @@ export const ProfileTable = ({
                         paginatedProfiles.every((p) => selectedIds.has(p.id))
                       }
                       onChange={(e) => handleSelectAll(e.target.checked)}
-                      className="cursor-pointer"
+                      className="rounded border-gray-300 text-gray-600 focus:ring-gray-400 cursor-pointer"
                     />
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-[var(--text-color)]">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wide">
                     Name
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-[var(--text-color)]">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wide">
                     Phone
                   </th>
-                  <th className="px-4 py-3 text-center text-xs font-medium text-[var(--text-color)]">
+                  <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wide">
                     User Type
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-[var(--text-color)]">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wide">
                     Onboarded By
                   </th>
-                  <th className="px-4 py-3 text-center text-xs font-medium text-[var(--text-color)]">
+                  <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wide">
                     Status
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-[var(--text-color)]">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wide">
                     Created
                   </th>
-                  <th className="px-4 py-3 text-center text-xs font-medium text-[var(--text-color)]">
+                  <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wide">
                     KYC
                   </th>
-                  <th className="px-4 py-3 text-right text-xs font-medium text-[var(--text-color)]">
+                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wide">
                     Total Txns
                   </th>
-                  <th className="px-4 py-3 text-right text-xs font-medium text-[var(--text-color)]">
+                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wide">
                     GMV
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[var(--border)]">
+              <tbody className="divide-y divide-gray-100">
                 {paginatedProfiles.map((profile) => (
                   <tr
                     key={profile.id}
-                    className="hover:bg-[var(--muted)] cursor-pointer transition-colors"
+                    className="hover:bg-gray-50 cursor-pointer transition-colors"
                     onClick={() => onRowClick(profile)}
                   >
                     <td
-                      className="px-4 py-3 text-center"
+                      className="px-6 py-4 text-center"
                       onClick={(e) => e.stopPropagation()}
                     >
                       <input
                         type="checkbox"
                         checked={selectedIds.has(profile.id)}
                         onChange={(e) => handleSelectOne(profile.id, e.target.checked)}
-                        className="cursor-pointer"
+                        className="rounded border-gray-300 text-gray-600 focus:ring-gray-400 cursor-pointer"
                       />
                     </td>
-                    <td className="px-4 py-3">
-                      <div className="text-sm font-semibold text-[#3B82F6] hover:underline">
+                    <td className="px-6 py-4">
+                      <div className="text-sm font-medium text-gray-900">
                         {profile.name}
                       </div>
-                      <div className="text-xs text-[var(--muted-foreground)]">{profile.email}</div>
+                      <div className="text-xs text-gray-600">{profile.email}</div>
                     </td>
-                    <td className="px-4 py-3">
-                      <a
-                        href={`tel:${profile.phone}`}
-                        className="text-sm text-[var(--text-color)] hover:underline"
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        {profile.phone}
-                      </a>
+                    <td className="px-6 py-4 text-sm text-gray-600">
+                      {profile.phone}
                     </td>
-                    <td className="px-4 py-3 text-center">
+                    <td className="px-6 py-4 text-center">
                       <UserTypeBadge type={profile.userType} />
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-6 py-4">
                       {profile.onboardedBy === 'Admin' ? (
-                        <span className="text-sm text-[var(--muted-foreground)]">Admin</span>
+                        <span className="text-sm text-gray-600">Admin</span>
                       ) : (
                         <button
                           onClick={(e) => {
@@ -315,25 +322,25 @@ export const ProfileTable = ({
                               onParentClick(profile.onboardedBy.id);
                             }
                           }}
-                          className="text-sm text-[#3B82F6] hover:underline text-left"
+                          className="text-sm text-gray-900 hover:underline text-left"
                         >
                           {typeof profile.onboardedBy !== 'string' ? profile.onboardedBy.name : ''}
                         </button>
                       )}
                     </td>
-                    <td className="px-4 py-3 text-center">
+                    <td className="px-6 py-4 text-center">
                       <StatusPill status={profile.status} />
                     </td>
-                    <td className="px-4 py-3 text-sm text-[var(--muted-foreground)]">
+                    <td className="px-6 py-4 text-sm text-gray-600">
                       {fmtDate(profile.created, 'short')}
                     </td>
-                    <td className="px-4 py-3 text-center">
+                    <td className="px-6 py-4 text-center">
                       <KYCIcon status={profile.kycStatus} showLabel />
                     </td>
-                    <td className="px-4 py-3 text-sm text-right text-[var(--text-color)]">
+                    <td className="px-6 py-4 text-sm text-right text-gray-900">
                       {fmtNumber(profile.totalTransactions)}
                     </td>
-                    <td className="px-4 py-3 text-sm text-right font-medium text-[var(--text-color)]">
+                    <td className="px-6 py-4 text-sm text-right font-semibold text-gray-900">
                       {fmtCurrency(profile.gmv)}
                     </td>
                   </tr>
@@ -343,9 +350,9 @@ export const ProfileTable = ({
           </div>
 
           {/* Pagination */}
-          <div className="flex items-center justify-between">
+          <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between bg-gray-50">
             <div className="flex items-center gap-2">
-              <span className="text-sm text-[var(--muted-foreground)]">
+              <span className="text-sm text-gray-600">
                 Showing {startIndex + 1}-{Math.min(startIndex + perPage, sortedProfiles.length)} of{' '}
                 {sortedProfiles.length} results
               </span>
@@ -355,30 +362,30 @@ export const ProfileTable = ({
                   setPerPage(Number(e.target.value));
                   setCurrentPage(1);
                 }}
-                className="px-2 py-1 border border-[var(--border)] rounded-lg text-sm bg-white"
+                className="px-2 py-1 border border-gray-300 rounded text-xs bg-white"
               >
                 <option value={10}>10</option>
                 <option value={25}>25</option>
                 <option value={50}>50</option>
               </select>
-              <span className="text-sm text-[var(--muted-foreground)]">per page</span>
+              <span className="text-sm text-gray-600">per page</span>
             </div>
 
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                 disabled={currentPage === 1}
-                className="px-3 py-1 border border-[var(--border)] rounded-lg text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[var(--muted)]"
+                className="px-3 py-1 border border-gray-300 rounded text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 bg-white"
               >
                 ←
               </button>
-              <span className="text-sm text-[var(--text-color)]">
+              <span className="text-sm text-gray-900">
                 {currentPage} / {totalPages}
               </span>
               <button
                 onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
                 disabled={currentPage === totalPages}
-                className="px-3 py-1 border border-[var(--border)] rounded-lg text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[var(--muted)]"
+                className="px-3 py-1 border border-gray-300 rounded text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 bg-white"
               >
                 →
               </button>
@@ -386,8 +393,8 @@ export const ProfileTable = ({
           </div>
         </>
       ) : (
-        <div className="border border-[var(--border)] rounded-xl p-12 text-center">
-          <div className="text-[var(--muted-foreground)] mb-4">
+        <div className="px-6 py-12 text-center">
+          <div className="text-gray-500 mb-4">
             No profiles match these filters
           </div>
           {hasActiveFilters && (
