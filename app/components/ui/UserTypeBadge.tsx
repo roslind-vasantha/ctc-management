@@ -6,9 +6,9 @@ interface UserTypeBadgeProps {
 }
 
 const typeStyles: Record<UserType, string> = {
-  Distributor: 'bg-[#3B82F6] text-white border-[#3B82F6]',
-  Retailer: 'bg-[#8B5CF6] text-white border-[#8B5CF6]',
-  Customer: 'bg-[#10B981] text-white border-[#10B981]',
+  Distributor: 'bg-blue-50 text-blue-700 border-blue-200',
+  Retailer: 'bg-purple-50 text-purple-700 border-purple-200',
+  Customer: 'bg-emerald-50 text-emerald-700 border-emerald-200',
 };
 
 export const UserTypeBadge = ({ type, className = '' }: UserTypeBadgeProps) => {

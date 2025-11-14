@@ -2,12 +2,10 @@
 
 import { useState } from 'react';
 import { UserTypeBadge } from '@/app/components/ui/UserTypeBadge';
-import { StatusPill } from '@/app/components/ui/StatusPill';
-import { KYCIcon } from '@/app/components/ui/KYCIcon';
 import { Button } from '@/app/components/ui/Button';
-import { fmtCurrency, fmtNumber, fmtDate } from '@/lib/format';
+import { fmtNumber, fmtDate } from '@/lib/format';
 import type { UnifiedProfile, UserType, ProfileStatus, KYCStatus } from '@/lib/types';
-import { Search, X, Download, Power } from 'lucide-react';
+import { Search, X, Download } from 'lucide-react';
 
 interface ProfileTableProps {
   profiles: UnifiedProfile[];
@@ -30,7 +28,7 @@ export const ProfileTable = ({
   const [typeFilter, setTypeFilter] = useState<UserType | 'All'>('All');
   const [statusFilter, setStatusFilter] = useState<ProfileStatus | 'All'>('All');
   const [kycFilter, setKycFilter] = useState<KYCStatus | 'All'>('All');
-  const [sortBy, setSortBy] = useState<'created' | 'name' | 'gmv'>('created');
+  const [sortBy, setSortBy] = useState<'created' | 'name'>('created');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [perPage, setPerPage] = useState(10);
@@ -69,8 +67,6 @@ export const ProfileTable = ({
       comparison = new Date(a.created).getTime() - new Date(b.created).getTime();
     } else if (sortBy === 'name') {
       comparison = a.name.localeCompare(b.name);
-    } else if (sortBy === 'gmv') {
-      comparison = a.gmv - b.gmv;
     }
 
     return sortOrder === 'asc' ? comparison : -comparison;
@@ -188,7 +184,6 @@ export const ProfileTable = ({
           >
             <option value="created">Created</option>
             <option value="name">Name (A-Z)</option>
-            <option value="gmv">GMV</option>
           </select>
 
           <button
@@ -264,20 +259,17 @@ export const ProfileTable = ({
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wide">
                     Onboarded By
                   </th>
-                  <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wide">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wide">
                     Status
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wide">
                     Created
                   </th>
-                  <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wide">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wide">
                     KYC
                   </th>
                   <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wide">
                     Total Txns
-                  </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wide">
-                    GMV
                   </th>
                 </tr>
               </thead>
@@ -328,20 +320,33 @@ export const ProfileTable = ({
                         </button>
                       )}
                     </td>
-                    <td className="px-6 py-4 text-center">
-                      <StatusPill status={profile.status} />
+                    <td className="px-6 py-4">
+                      <span className={`text-sm font-medium ${
+                        profile.status === 'Active'
+                          ? 'text-emerald-700'
+                          : profile.status === 'Suspended'
+                          ? 'text-red-700'
+                          : 'text-amber-700'
+                      }`}>
+                        {profile.status}
+                      </span>
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-600">
                       {fmtDate(profile.created, 'short')}
                     </td>
-                    <td className="px-6 py-4 text-center">
-                      <KYCIcon status={profile.kycStatus} showLabel />
+                    <td className="px-6 py-4">
+                      <span className={`text-sm font-medium ${
+                        profile.kycStatus === 'Verified'
+                          ? 'text-emerald-700'
+                          : profile.kycStatus === 'Pending'
+                          ? 'text-amber-700'
+                          : 'text-gray-500'
+                      }`}>
+                        {profile.kycStatus || '—'}
+                      </span>
                     </td>
                     <td className="px-6 py-4 text-sm text-right text-gray-900">
                       {fmtNumber(profile.totalTransactions)}
-                    </td>
-                    <td className="px-6 py-4 text-sm text-right font-semibold text-gray-900">
-                      {fmtCurrency(profile.gmv)}
                     </td>
                   </tr>
                 ))}

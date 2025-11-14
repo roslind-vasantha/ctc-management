@@ -142,7 +142,7 @@ export default function ProfileManagementPage() {
   };
 
   const handleExportCSV = (profilesToExport: UnifiedProfile[]) => {
-    const headers = ['Name', 'Email', 'Phone', 'User Type', 'Onboarded By', 'Status', 'Created', 'KYC', 'Total Txns', 'GMV'];
+    const headers = ['Name', 'Email', 'Phone', 'User Type', 'Onboarded By', 'Status', 'Created', 'KYC', 'Total Txns'];
     const rows = profilesToExport.map((p) => [
       p.name,
       p.email,
@@ -153,7 +153,6 @@ export default function ProfileManagementPage() {
       fmtDate(p.created, 'short'),
       p.kycStatus || 'None',
       p.totalTransactions,
-      p.gmv,
     ]);
 
     const csv = [headers, ...rows].map((row) => row.join(',')).join('\n');
