@@ -54,6 +54,13 @@ export default function ManagementOnboardingPage() {
     retailerId: '',
     name: '',
     phone: '',
+    email: '',
+    dateOfBirth: '',
+    companyName: '',
+    designation: '',
+    salaryPerAnnum: '',
+    aadhaarDoc: null as File | null,
+    panDoc: null as File | null,
   });
 
   const [errors, setErrors] = useState({
@@ -113,6 +120,15 @@ export default function ManagementOnboardingPage() {
       setErrors({ ...errors, phone: 'Phone must be 10 digits' });
     } else {
       setErrors({ ...errors, phone: '' });
+    }
+  };
+
+  const handleCustomerEmailChange = (email: string) => {
+    setCustomerForm({ ...customerForm, email });
+    if (email && !validateEmail(email)) {
+      setErrors({ ...errors, email: 'Invalid email format' });
+    } else {
+      setErrors({ ...errors, email: '' });
     }
   };
 
@@ -244,11 +260,21 @@ export default function ManagementOnboardingPage() {
       return;
     }
 
+    if (customerForm.email && !validateEmail(customerForm.email)) {
+      showToast('Please enter a valid email', 'error');
+      return;
+    }
+
     const newCustomer: Customer = {
       id: `C${String(customers.length + 1).padStart(3, '0')}`,
       retailerId: customerForm.retailerId,
       name: customerForm.name,
       phone: customerForm.phone,
+      email: customerForm.email || undefined,
+      dateOfBirth: customerForm.dateOfBirth || undefined,
+      companyName: customerForm.companyName || undefined,
+      designation: customerForm.designation || undefined,
+      salaryPerAnnum: customerForm.salaryPerAnnum ? parseFloat(customerForm.salaryPerAnnum) : undefined,
       createdAt: new Date().toISOString(),
       active: true,
     };
@@ -264,6 +290,13 @@ export default function ManagementOnboardingPage() {
       retailerId: '',
       name: '',
       phone: '',
+      email: '',
+      dateOfBirth: '',
+      companyName: '',
+      designation: '',
+      salaryPerAnnum: '',
+      aadhaarDoc: null,
+      panDoc: null,
     });
     setErrors({ email: '', phone: '' });
   };
@@ -738,12 +771,12 @@ export default function ManagementOnboardingPage() {
           {/* Customer Form */}
           {activeTab === 'customer' && (
             <form onSubmit={handleCustomerSubmit} className="space-y-6">
-              {/* Customer Information - All in One Row */}
+              {/* Section 1: Personal Information */}
               <div>
                 <h3 className="text-sm font-semibold text-[var(--text-color)] uppercase tracking-wider border-b border-[var(--border)] pb-2.5 mb-4">
-                  Customer Information
+                  Personal Information
                 </h3>
-                <div className="grid grid-cols-3 gap-4">
+                <div className="grid grid-cols-5 gap-4">
                   <Select
                     label="Select Retailer"
                     value={customerForm.retailerId}
@@ -771,6 +804,78 @@ export default function ManagementOnboardingPage() {
                     fullWidth
                     helperText="10-digit phone number"
                   />
+                  <Input
+                    label="Email"
+                    type="email"
+                    value={customerForm.email}
+                    onChange={(e) => handleCustomerEmailChange(e.target.value)}
+                    errorText={errors.email}
+                    fullWidth
+                  />
+                  <Input
+                    label="Date of Birth"
+                    type="date"
+                    value={customerForm.dateOfBirth}
+                    onChange={(e) => setCustomerForm({ ...customerForm, dateOfBirth: e.target.value })}
+                    fullWidth
+                  />
+                </div>
+              </div>
+
+              {/* Section 2: Employment Details */}
+              <div>
+                <h3 className="text-sm font-semibold text-[var(--text-color)] uppercase tracking-wider border-b border-[var(--border)] pb-2.5 mb-4">
+                  Employment Details
+                </h3>
+                <div className="grid grid-cols-3 gap-4">
+                  <Input
+                    label="Company Name"
+                    value={customerForm.companyName}
+                    onChange={(e) => setCustomerForm({ ...customerForm, companyName: e.target.value })}
+                    fullWidth
+                  />
+                  <Input
+                    label="Designation"
+                    value={customerForm.designation}
+                    onChange={(e) => setCustomerForm({ ...customerForm, designation: e.target.value })}
+                    fullWidth
+                  />
+                  <Input
+                    label="Salary per Annum"
+                    type="number"
+                    step="0.01"
+                    value={customerForm.salaryPerAnnum}
+                    onChange={(e) => setCustomerForm({ ...customerForm, salaryPerAnnum: e.target.value })}
+                    fullWidth
+                    helperText="Annual salary in INR"
+                  />
+                </div>
+              </div>
+
+              {/* Section 3: Document Verification */}
+              <div>
+                <h3 className="text-sm font-semibold text-[var(--text-color)] uppercase tracking-wider border-b border-[var(--border)] pb-2.5 mb-4">
+                  Document Verification
+                </h3>
+                <div className="grid grid-cols-2 gap-4">
+                  <FileUpload
+                    label="Aadhaar Document"
+                    accept=".pdf,.jpg,.jpeg,.png"
+                    maxSize={25}
+                    value={customerForm.aadhaarDoc}
+                    onFileSelect={(file) => setCustomerForm({ ...customerForm, aadhaarDoc: file })}
+                    fullWidth
+                    helperText="Upload Aadhaar card (PDF/Image)"
+                  />
+                  <FileUpload
+                    label="PAN Document"
+                    accept=".pdf,.jpg,.jpeg,.png"
+                    maxSize={25}
+                    value={customerForm.panDoc}
+                    onFileSelect={(file) => setCustomerForm({ ...customerForm, panDoc: file })}
+                    fullWidth
+                    helperText="Upload PAN card (PDF/Image)"
+                  />
                 </div>
               </div>
 
@@ -784,6 +889,13 @@ export default function ManagementOnboardingPage() {
                       retailerId: '',
                       name: '',
                       phone: '',
+                      email: '',
+                      dateOfBirth: '',
+                      companyName: '',
+                      designation: '',
+                      salaryPerAnnum: '',
+                      aadhaarDoc: null,
+                      panDoc: null,
                     });
                     setErrors({ email: '', phone: '' });
                   }}

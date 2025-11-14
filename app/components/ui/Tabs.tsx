@@ -34,7 +34,7 @@ export const Tabs = ({ tabs, defaultTab, onChange }: TabsProps) => {
   return (
     <div className="w-full">
       <div
-        className="flex border-b border-[var(--border)]"
+        className="flex gap-1 border-b border-[#e5e7eb]"
         role="tablist"
         aria-label="Tabs"
       >
@@ -49,16 +49,19 @@ export const Tabs = ({ tabs, defaultTab, onChange }: TabsProps) => {
             onClick={() => handleTabChange(tab.id)}
             onKeyDown={(e) => handleKeyDown(e, tab.id)}
             className={`
-              px-4 py-2 font-medium text-sm transition-colors
-              focus:outline-none focus:ring-2 focus:ring-[var(--foreground)] focus:ring-offset-2
+              relative px-5 py-3 font-medium text-sm transition-all rounded-t-lg
+              focus:outline-none
               ${
                 activeTab === tab.id
-                  ? 'border-b-2 border-[var(--foreground)] text-[var(--foreground)]'
-                  : 'text-[var(--muted-foreground)] hover:text-[var(--text-color)]'
+                  ? 'text-[var(--text-color)]'
+                  : 'text-[#6b7280] hover:text-[var(--text-color)] hover:bg-[#f9fafb]'
               }
             `}
           >
             {tab.label}
+            {activeTab === tab.id && (
+              <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#3B82F6]" />
+            )}
           </button>
         ))}
       </div>
@@ -66,7 +69,7 @@ export const Tabs = ({ tabs, defaultTab, onChange }: TabsProps) => {
         role="tabpanel"
         id={`panel-${activeTab}`}
         aria-labelledby={`tab-${activeTab}`}
-        className="mt-4"
+        className="mt-8"
       >
         {activeContent}
       </div>

@@ -107,7 +107,7 @@ export const distributors: Distributor[] = [
     email: 'support@tabuk-fh.sa',
     phone: '+966-14-789-0123',
     region: 'Tabuk',
-    kycStatus: 'pending',
+    kycStatus: 'verified',
     commissionRateFixed: 5.0,
     commissionRatePercent: 1.5,
     monthVolume: 42,
@@ -121,7 +121,7 @@ export const distributors: Distributor[] = [
     email: 'hello@abha-cg.sa',
     phone: '+966-17-890-1234',
     region: 'Abha',
-    kycStatus: 'pending',
+    kycStatus: 'verified',
     commissionRateFixed: 5.0,
     commissionRatePercent: 1.5,
     monthVolume: 35,
@@ -137,47 +137,49 @@ export const retailers: Retailer[] = [
   { id: 'R001', distributorId: 'D001', name: 'Quick Cash Riyadh North', email: 'north@qc-riyadh.sa', phone: '+966-11-111-1111', city: 'Riyadh', kycStatus: 'verified', monthVolume: 52, monthGmv: 208000, createdAt: daysAgo(300), active: true },
   { id: 'R002', distributorId: 'D001', name: 'Express Money Riyadh Center', email: 'center@em-riyadh.sa', phone: '+966-11-111-2222', city: 'Riyadh', kycStatus: 'verified', monthVolume: 48, monthGmv: 192000, createdAt: daysAgo(290), active: true },
   { id: 'R003', distributorId: 'D001', name: 'Fast Finance Riyadh South', email: 'south@ff-riyadh.sa', phone: '+966-11-111-3333', city: 'Riyadh', kycStatus: 'verified', monthVolume: 42, monthGmv: 168000, createdAt: daysAgo(280), active: true },
-  
+
   // D002 - Jeddah
   { id: 'R004', distributorId: 'D002', name: 'Jeddah Quick Pay', email: 'info@jqp.sa', phone: '+966-12-222-1111', city: 'Jeddah', kycStatus: 'verified', monthVolume: 46, monthGmv: 184000, createdAt: daysAgo(260), active: true },
   { id: 'R005', distributorId: 'D002', name: 'Coastal Cash Services', email: 'coastal@ccs.sa', phone: '+966-12-222-2222', city: 'Jeddah', kycStatus: 'verified', monthVolume: 44, monthGmv: 176000, createdAt: daysAgo(250), active: true },
-  { id: 'R006', distributorId: 'D002', name: 'Red Sea Finance', email: 'redsea@finance.sa', phone: '+966-12-222-3333', city: 'Jeddah', kycStatus: 'pending', monthVolume: 38, monthGmv: 152000, createdAt: daysAgo(240), active: true },
-  
+  { id: 'R006', distributorId: 'D002', name: 'Red Sea Finance', email: 'redsea@finance.sa', phone: '+966-12-222-3333', city: 'Jeddah', kycStatus: 'verified', monthVolume: 38, monthGmv: 152000, createdAt: daysAgo(240), active: true },
+
   // D003 - Dammam
   { id: 'R007', distributorId: 'D003', name: 'Eastern Cash Point', email: 'east@cashpoint.sa', phone: '+966-13-333-1111', city: 'Dammam', kycStatus: 'verified', monthVolume: 36, monthGmv: 144000, createdAt: daysAgo(230), active: true },
   { id: 'R008', distributorId: 'D003', name: 'Dammam Money Hub', email: 'hub@dammam.sa', phone: '+966-13-333-2222', city: 'Dammam', kycStatus: 'verified', monthVolume: 34, monthGmv: 136000, createdAt: daysAgo(220), active: true },
   { id: 'R009', distributorId: 'D003', name: 'Gulf Finance Express', email: 'gulf@fexpress.sa', phone: '+966-13-333-3333', city: 'Dammam', kycStatus: 'verified', monthVolume: 28, monthGmv: 112000, createdAt: daysAgo(210), active: true },
-  
+
   // D004 - Mecca
   { id: 'R010', distributorId: 'D004', name: 'Holy City Cash', email: 'holy@cash.sa', phone: '+966-12-444-1111', city: 'Mecca', kycStatus: 'verified', monthVolume: 32, monthGmv: 128000, createdAt: daysAgo(200), active: true },
   { id: 'R011', distributorId: 'D004', name: 'Mecca Finance Center', email: 'mfc@finance.sa', phone: '+966-12-444-2222', city: 'Mecca', kycStatus: 'verified', monthVolume: 30, monthGmv: 120000, createdAt: daysAgo(190), active: true },
-  { id: 'R012', distributorId: 'D004', name: 'Quick Service Mecca', email: 'quick@mecca.sa', phone: '+966-12-444-3333', city: 'Mecca', kycStatus: 'pending', monthVolume: 23, monthGmv: 92000, createdAt: daysAgo(180), active: true },
-  
+  { id: 'R012', distributorId: 'D004', name: 'Quick Service Mecca', email: 'quick@mecca.sa', phone: '+966-12-444-3333', city: 'Mecca', kycStatus: 'verified', monthVolume: 23, monthGmv: 92000, createdAt: daysAgo(180), active: true },
+
   // D005 - Medina
   { id: 'R013', distributorId: 'D005', name: 'Medina Express Cash', email: 'express@medina.sa', phone: '+966-14-555-1111', city: 'Medina', kycStatus: 'verified', monthVolume: 28, monthGmv: 112000, createdAt: daysAgo(170), active: true },
   { id: 'R014', distributorId: 'D005', name: 'Prophet City Finance', email: 'pcf@medina.sa', phone: '+966-14-555-2222', city: 'Medina', kycStatus: 'verified', monthVolume: 26, monthGmv: 104000, createdAt: daysAgo(160), active: true },
   { id: 'R015', distributorId: 'D005', name: 'Medina Money Point', email: 'mmp@medina.sa', phone: '+966-14-555-3333', city: 'Medina', kycStatus: 'verified', monthVolume: 22, monthGmv: 88000, createdAt: daysAgo(150), active: true },
-  
+
   // D006 - Khobar
   { id: 'R016', distributorId: 'D006', name: 'Khobar Cash Express', email: 'kce@khobar.sa', phone: '+966-13-666-1111', city: 'Khobar', kycStatus: 'verified', monthVolume: 24, monthGmv: 96000, createdAt: daysAgo(140), active: true },
   { id: 'R017', distributorId: 'D006', name: 'Corniche Finance', email: 'corniche@finance.sa', phone: '+966-13-666-2222', city: 'Khobar', kycStatus: 'verified', monthVolume: 22, monthGmv: 88000, createdAt: daysAgo(130), active: true },
-  { id: 'R018', distributorId: 'D006', name: 'Khobar Quick Money', email: 'quick@khobar.sa', phone: '+966-13-666-3333', city: 'Khobar', kycStatus: 'pending', monthVolume: 18, monthGmv: 72000, createdAt: daysAgo(120), active: true },
-  
+  { id: 'R018', distributorId: 'D006', name: 'Khobar Quick Money', email: 'quick@khobar.sa', phone: '+966-13-666-3333', city: 'Khobar', kycStatus: 'verified', monthVolume: 18, monthGmv: 72000, createdAt: daysAgo(120), active: true },
+
   // D007 - Tabuk
   { id: 'R019', distributorId: 'D007', name: 'Tabuk Fast Cash', email: 'fast@tabuk.sa', phone: '+966-14-777-1111', city: 'Tabuk', kycStatus: 'verified', monthVolume: 16, monthGmv: 64000, createdAt: daysAgo(80), active: true },
-  { id: 'R020', distributorId: 'D007', name: 'Northern Finance Hub', email: 'north@fhub.sa', phone: '+966-14-777-2222', city: 'Tabuk', kycStatus: 'pending', monthVolume: 14, monthGmv: 56000, createdAt: daysAgo(70), active: true },
-  { id: 'R021', distributorId: 'D007', name: 'Tabuk Money Services', email: 'tms@tabuk.sa', phone: '+966-14-777-3333', city: 'Tabuk', kycStatus: 'pending', monthVolume: 12, monthGmv: 48000, createdAt: daysAgo(60), active: true },
-  
+  { id: 'R020', distributorId: 'D007', name: 'Northern Finance Hub', email: 'north@fhub.sa', phone: '+966-14-777-2222', city: 'Tabuk', kycStatus: 'verified', monthVolume: 14, monthGmv: 56000, createdAt: daysAgo(70), active: true },
+  { id: 'R021', distributorId: 'D007', name: 'Tabuk Money Services', email: 'tms@tabuk.sa', phone: '+966-14-777-3333', city: 'Tabuk', kycStatus: 'verified', monthVolume: 0, monthGmv: 0, createdAt: daysAgo(30), active: true },
+
   // D008 - Abha
   { id: 'R022', distributorId: 'D008', name: 'Abha Cash Center', email: 'acc@abha.sa', phone: '+966-17-888-1111', city: 'Abha', kycStatus: 'verified', monthVolume: 13, monthGmv: 52000, createdAt: daysAgo(50), active: true },
-  { id: 'R023', distributorId: 'D008', name: 'Southern Express Finance', email: 'sef@abha.sa', phone: '+966-17-888-2222', city: 'Abha', kycStatus: 'pending', monthVolume: 12, monthGmv: 48000, createdAt: daysAgo(40), active: true },
-  { id: 'R024', distributorId: 'D008', name: 'Mountain Cash Point', email: 'mcp@abha.sa', phone: '+966-17-888-3333', city: 'Abha', kycStatus: 'pending', monthVolume: 10, monthGmv: 40000, createdAt: daysAgo(30), active: true },
+  { id: 'R023', distributorId: 'D008', name: 'Southern Express Finance', email: 'sef@abha.sa', phone: '+966-17-888-2222', city: 'Abha', kycStatus: 'verified', monthVolume: 0, monthGmv: 0, createdAt: daysAgo(4
+
+  ), active: true },
+  { id: 'R024', distributorId: 'D008', name: 'Mountain Cash Point', email: 'mcp@abha.sa', phone: '+966-17-888-3333', city: 'Abha', kycStatus: 'verified', monthVolume: 10, monthGmv: 40000, createdAt: daysAgo(30), active: true },
 ];
 
 // 120 Customers (5 per retailer)
 export const customers: Customer[] = [];
 const cardBrands: Customer['cardBrand'][] = ['VISA', 'MASTERCARD', 'AMEX', 'RUPAY'];
-const kycStatuses: Customer['kycStatus'][] = ['verified', 'verified', 'verified', 'verified', 'pending'];
+const kycStatuses: Customer['kycStatus'][] = ['verified', 'verified', 'verified', 'verified', 'verified'];
 
 retailers.forEach((retailer, rIdx) => {
   for (let i = 0; i < 5; i++) {
@@ -251,17 +253,17 @@ for (let i = 0; i < 600; i++) {
   const customer = customers[i % 120];
   const retailer = retailers.find((r) => r.id === customer.retailerId)!;
   const distributor = distributors.find((d) => d.id === retailer.distributorId)!;
-  
+
   const amount = Math.floor(Math.random() * 4500) + 500; // 500-5000
   const feeFixed = 10.0;
   const feePercent = 2.5;
-  const commissionToMgmt = feeFixed + (amount * feePercent / 100) - distributor.commissionRateFixed - (amount * distributor.commissionRatePercent / 100);
-  const commissionToDistributor = distributor.commissionRateFixed + (amount * distributor.commissionRatePercent / 100);
-  
+  const commissionToMgmt = feeFixed + (amount * feePercent / 100) - (distributor.commissionRateFixed || 0) - (amount * (distributor.commissionRatePercent || 0) / 100);
+  const commissionToDistributor = (distributor.commissionRateFixed || 0) + (amount * (distributor.commissionRatePercent || 0) / 100);
+
   const status = txStatuses[i % 10];
   const createdDaysAgo = Math.floor((i / 600) * 90);
   const createdAt = daysAgo(createdDaysAgo);
-  
+
   transactions.push({
     id: `T${String(i + 1).padStart(6, '0')}`,
     distributorId: distributor.id,
@@ -305,7 +307,7 @@ export const cardApprovals: CreditCardApproval[] = [
   { id: 'CCA010', customerId: 'C008', cardLast4: '1008', cardBrand: 'VISA', limitRequested: 52000, documents: [{ name: 'ID_Card.pdf', url: '#' }, { name: 'Salary_Certificate.pdf', url: '#' }], status: 'pending', createdAt: daysAgo(10) },
   { id: 'CCA011', customerId: 'C019', cardLast4: '1019', cardBrand: 'AMEX', limitRequested: 90000, documents: [{ name: 'Passport.pdf', url: '#' }, { name: 'Investment_Portfolio.pdf', url: '#' }], status: 'pending', createdAt: daysAgo(11) },
   { id: 'CCA012', customerId: 'C033', cardLast4: '1033', cardBrand: 'MASTERCARD', limitRequested: 58000, documents: [{ name: 'National_ID.pdf', url: '#' }, { name: 'Bank_Statement.pdf', url: '#' }], status: 'pending', createdAt: daysAgo(12) },
-  
+
   // Some approved/rejected for history
   { id: 'CCA013', customerId: 'C045', cardLast4: '1045', cardBrand: 'VISA', limitRequested: 50000, documents: [{ name: 'ID_Card.pdf', url: '#' }], status: 'approved', reviewer: 'Admin User', reviewedAt: daysAgo(15), createdAt: daysAgo(20) },
   { id: 'CCA014', customerId: 'C067', cardLast4: '1067', cardBrand: 'MASTERCARD', limitRequested: 120000, documents: [{ name: 'ID_Card.pdf', url: '#' }], status: 'rejected', reviewer: 'Admin User', reviewedAt: daysAgo(18), createdAt: daysAgo(25) },

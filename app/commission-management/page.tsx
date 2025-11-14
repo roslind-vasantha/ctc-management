@@ -81,7 +81,7 @@ export default function CommissionManagementPage() {
       distributorId: rule.distributorId || '',
       baseFixed: String(rule.baseFixed),
       basePercent: String(rule.basePercent),
-      tiers: rule.tiers || [{ minVolume: 50, fixed: 4.5, percent: 1.4 }],
+      tiers: rule.tiers as any || [{ minVolume: 50, fixed: 4.5, percent: 1.4 }],
     });
     setIsModalOpen(true);
   };

@@ -147,8 +147,8 @@ export default function OnboardingApprovalPage() {
               {
                 key: 'city',
                 label: 'City',
-                options: Array.from(new Set(pendingRetailers.map((r) => r.city))).map(
-                  (c) => ({ value: c, label: c })
+                options: Array.from(new Set(pendingRetailers.map((r) => r.city).filter(Boolean))).map(
+                  (c) => ({ value: c!, label: c! })
                 ),
               },
             ]}

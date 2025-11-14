@@ -17,11 +17,11 @@ export type Distributor = {
   gstNumber?: string;
   businessPan?: string;
   // Commission
-  commissionType: 'fixed' | 'percentage';
-  commissionValue: number;
+  commissionType?: 'fixed' | 'percentage';
+  commissionValue?: number;
   // Legacy fields (for backward compatibility)
-  commissionRateFixed: number;
-  commissionRatePercent: number;
+  commissionRateFixed?: number;
+  commissionRatePercent?: number;
   // Agreement
   agreementDoc?: string;
   monthVolume: number;
@@ -46,8 +46,8 @@ export type Retailer = {
   gstNumber?: string;
   businessPan?: string;
   // Commission
-  commissionType: 'fixed' | 'percentage';
-  commissionValue: number;
+  commissionType?: 'fixed' | 'percentage';
+  commissionValue?: number;
   // Agreement
   agreementDoc?: string;
   monthVolume: number;
@@ -62,6 +62,15 @@ export type Customer = {
   name: string; // Name as per Aadhaar
   email?: string;
   phone: string;
+  dateOfBirth?: string;
+  // Employment Details
+  companyName?: string;
+  designation?: string;
+  salaryPerAnnum?: number;
+  // KYC Documents
+  aadhaarDoc?: string;
+  panDoc?: string;
+  // Card Details
   cardLast4?: string;
   cardBrand?: 'VISA' | 'MASTERCARD' | 'AMEX' | 'RUPAY';
   kycStatus?: 'verified' | 'pending' | 'rejected';
@@ -152,3 +161,52 @@ export type ManagementUser = {
   role: 'admin' | 'analyst';
 };
 
+// Profile Management Types
+export type UserType = 'Distributor' | 'Retailer' | 'Customer';
+export type ProfileStatus = 'Active' | 'Suspended' | 'Pending KYC';
+export type KYCStatus = 'Verified' | 'Pending' | null;
+
+export type UnifiedProfile = {
+  id: ID;
+  name: string;
+  email: string;
+  phone: string;
+  userType: UserType;
+  status: ProfileStatus;
+  kycStatus: KYCStatus;
+  onboardedBy: {
+    id: string;
+    name: string;
+    type: UserType;
+  } | 'Admin';
+  created: string;
+  totalTransactions: number;
+  gmv: number;
+};
+
+export type SummaryMetrics = {
+  totalTxns: number;
+  successfulTxns: number;
+  gmv: number;
+  avgTicket: number;
+  successRate: number;
+};
+
+export type Document = {
+  id: string;
+  type: string;
+  number: string;
+  status: 'Verified' | 'Pending' | 'Rejected';
+  uploadedAt: string;
+  url?: string;
+};
+
+export type ProfileRelationship = {
+  id: string;
+  name: string;
+  type: UserType;
+  status: ProfileStatus;
+  onboarded: string;
+  txns: number;
+  gmv: number;
+};
