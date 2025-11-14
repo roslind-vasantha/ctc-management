@@ -334,6 +334,16 @@ export default function ManagementOnboardingPage() {
   return (
     <div className="min-h-screen bg-[var(--background)] p-6">
       <div className="max-w-7xl mx-auto">
+        {/* Page Title */}
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-[var(--text-color)] mb-2">
+            Management Onboarding
+          </h1>
+          <p className="text-sm text-[var(--muted-foreground)]">
+            Create and onboard new distributors, retailers, and customers to the platform
+          </p>
+        </div>
+
         {/* Tabs */}
         <div className="mb-6">
           <div className="flex gap-1.5 bg-[var(--muted)] rounded-full p-1 max-w-md mx-auto">
