@@ -2,9 +2,20 @@
 @import "tailwindcss";
 
 :root {
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: light;
+  }
+}
+
+:root,
+.dark {
   /* Base */
-  --background: #f9fafb; /* calm neutral white-gray */
-  --foreground: #2563eb; /* near-black for crisp contrast */
+  --background: #f9fafb;
+  --foreground: #2563eb;
   --text-color: #0a0f0d;
   --muted: #e2e8f0;
   --muted-foreground: #6b7280;
@@ -13,9 +24,9 @@
   --input-bg: #ffffff;
 
   /* Brand Core */
-  --primary: #1a73e8; /* Outlook-style blue for main buttons */
-  --primary-accent: #4795f0; /* lighter hover/action tone */
-  --accent: #2563eb; /* vibrant blue for focus/active states */
+  --primary: #1a73e8;
+  --primary-accent: #4795f0;
+  --accent: #2563eb;
 
   /* Semantic Colors */
   --success-bg: #e6f9ee;
@@ -50,6 +61,15 @@ body {
   font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+input,
+select,
+textarea,
+button {
+  background: var(--input-bg);
+  color: var(--text-color);
+  border-color: var(--border);
 }
 
 * {

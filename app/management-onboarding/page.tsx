@@ -306,7 +306,7 @@ export default function ManagementOnboardingPage() {
 
   const sendAppLink = (phone: string, userType: 'distributor' | 'retailer' | 'customer', name: string) => {
     // In a real application, this would call an API to send SMS/WhatsApp
-    const appLink = 'https://app.ctc-management.sa/download';
+    const appLink = 'https://app.ctc-management.in/download';
     console.log(`Sending app link to ${name} (${userType}) at ${phone}: ${appLink}`);
     // Simulate sending message
     showToast(`App link sent to ${phone}`, 'info');

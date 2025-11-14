@@ -1,11 +1,14 @@
-export const fmtCurrency = (amount: number, currency: string = 'SAR'): string => {
-  return new Intl.NumberFormat('en-SA', {
+// INR currency formatter - Indian locale with ₹ symbol
+export function fmtINR(amount: number): string {
+  return new Intl.NumberFormat('en-IN', {
     style: 'currency',
-    currency,
-    minimumFractionDigits: 2,
+    currency: 'INR',
     maximumFractionDigits: 2,
   }).format(amount);
-};
+}
+
+// Alias for backward compatibility
+export const fmtCurrency = fmtINR;
 
 export const fmtPercent = (value: number, decimals: number = 2): string => {
   return `${value.toFixed(decimals)}%`;
@@ -48,7 +51,7 @@ export const fmtDate = (iso: string, format: 'short' | 'long' | 'relative' = 'sh
 };
 
 export const fmtNumber = (value: number): string => {
-  return new Intl.NumberFormat('en-US').format(value);
+  return new Intl.NumberFormat('en-IN').format(value);
 };
 
 export const fmtCompact = (value: number): string => {

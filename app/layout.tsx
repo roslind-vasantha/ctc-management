@@ -1,34 +1,37 @@
-'use client';
-
 import './globals.css';
-import { useState } from 'react';
-import { TopBar } from './components/layout/TopBar';
-import { SideNav } from './components/layout/SideNav';
-import { ToastProvider } from './components/ui/Toast';
+import type { Metadata } from 'next';
+import AppShell from './components/layout/AppShell';
+
+export const metadata: Metadata = {
+  title: 'Card-to-Cash Management',
+  description: 'Management console for card-to-cash onboarding and oversight.',
+};
 
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const [sideNavOpen, setSideNavOpen] = useState(false);
-  
   return (
     <html lang="en">
+      <head>
+        <meta name="color-scheme" content="light" />
+        <meta name="theme-color" content="#f9fafb" />
+      </head>
       <body>
-        <ToastProvider>
-          <div className="flex h-screen overflow-hidden">
-            <SideNav isOpen={sideNavOpen} onClose={() => setSideNavOpen(false)} />
-            
-            <div className="flex-1 flex flex-col overflow-hidden">
-              <TopBar onMenuClick={() => setSideNavOpen(true)} />
-              
-              <main className="flex-1 overflow-y-auto bg-[var(--background)] p-6">
-                {children}
-              </main>
-            </div>
-          </div>
-        </ToastProvider>
+        <AppShell>{children}</AppShell>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              try {
+                const root = document.documentElement;
+                if (root.classList.contains('dark')) {
+                  root.classList.remove('dark');
+                }
+              } catch (e) {}
+            `,
+          }}
+        />
       </body>
     </html>
   );

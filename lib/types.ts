@@ -77,7 +77,7 @@ export type Customer = {
   panDocument?: string;
   // Card Details
   cardLast4?: string;
-  cardBrand?: 'VISA' | 'MASTERCARD' | 'AMEX' | 'RUPAY';
+  cardBrand?: 'RUPAY' | 'VISA' | 'MASTERCARD' | 'AMEX';
   kycStatus?: 'verified' | 'pending' | 'rejected';
   createdAt: string;
   active: boolean;
