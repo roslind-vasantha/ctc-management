@@ -162,6 +162,7 @@ export default function ManagementOnboardingPage() {
       monthGmv: 0,
       createdAt: new Date().toISOString(),
       active: true,
+      onboardingState: 'pending',
     };
 
     addDistributor(newDistributor);
@@ -216,11 +217,12 @@ export default function ManagementOnboardingPage() {
       gstNumber: retailerForm.gstNumber,
       businessPan: retailerForm.businessPan,
       commissionType: retailerForm.commissionType,
-      commissionValue: parseFloat(retailerForm.commissionValue),
+      commissionAmount: parseFloat(retailerForm.commissionValue),
       monthVolume: 0,
       monthGmv: 0,
       createdAt: new Date().toISOString(),
       active: true,
+      onboardingState: 'pending',
     };
 
     addRetailer(newRetailer);
@@ -277,6 +279,7 @@ export default function ManagementOnboardingPage() {
       salaryPerAnnum: customerForm.salaryPerAnnum ? parseFloat(customerForm.salaryPerAnnum) : undefined,
       createdAt: new Date().toISOString(),
       active: true,
+      onboardingState: 'pending',
     };
 
     addCustomer(newCustomer);

@@ -61,3 +61,15 @@ export const fmtCompact = (value: number): string => {
   return value.toString();
 };
 
+export const fmtDateIN = (iso: string): string => {
+  // 02/11/2025 14:05 format, 24h time; use date-only if time is not provided
+  const d = new Date(iso);
+  const hasTime = d.getHours() + d.getMinutes() > 0;
+  return new Intl.DateTimeFormat('en-IN', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    ...(hasTime ? { hour: '2-digit', minute: '2-digit', hour12: false } : {}),
+  }).format(d);
+};
+

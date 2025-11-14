@@ -175,7 +175,7 @@ export default function ProfilePage() {
       const ret = retailers.find((r) => r.id === profileId);
       return {
         type: ret?.commissionType || null,
-        value: ret?.commissionValue || 0,
+        value: ret?.commissionAmount || 0,
         legacyFixed: undefined,
         legacyPercent: undefined,
       };
@@ -307,7 +307,7 @@ export default function ProfilePage() {
     } else if (profile.userType === 'Retailer') {
       updateRetailer(profileId, {
         commissionType: type,
-        commissionValue: value,
+        commissionAmount: value,
       });
     }
 
