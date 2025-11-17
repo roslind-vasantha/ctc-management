@@ -349,7 +349,7 @@ export default function ManagementOnboardingPage() {
         <div className="mb-6 flex gap-0 p-0 max-w-lg mx-auto rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
       <button
         onClick={() => setActiveTab('distributor')}
-        className={`flex-1 py-3 px-4 text-sm font-medium transition-all relative ${
+        className={`flex-1 py-3 px-4 text-sm font-medium transition-all relative cursor-pointer ${
           activeTab === 'distributor'
             ? 'text-blue-600'
             : 'text-gray-600 hover:text-gray-900'
@@ -363,7 +363,7 @@ export default function ManagementOnboardingPage() {
       <div className="border-l border-gray-200"></div>
       <button
         onClick={() => setActiveTab('retailer')}
-        className={`flex-1 py-3 px-4 text-sm font-medium transition-all relative ${
+        className={`flex-1 py-3 px-4 text-sm font-medium transition-all relative cursor-pointer ${
           activeTab === 'retailer'
             ? 'text-blue-600'
             : 'text-gray-600 hover:text-gray-900'
@@ -377,7 +377,7 @@ export default function ManagementOnboardingPage() {
       <div className="border-l border-gray-200"></div>
       <button
         onClick={() => setActiveTab('customer')}
-        className={`flex-1 py-3 px-4 text-sm font-medium transition-all relative ${
+        className={`flex-1 py-3 px-4 text-sm font-medium transition-all relative cursor-pointer ${
           activeTab === 'customer'
             ? 'text-blue-600'
             : 'text-gray-600 hover:text-gray-900'
@@ -398,7 +398,7 @@ export default function ManagementOnboardingPage() {
             <button
               type="button"
               onClick={copyShareLink}
-              className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-[var(--primary)] hover:bg-[var(--info-bg)] rounded-lg transition-colors"
+              className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-[var(--primary)] hover:bg-[var(--info-bg)] rounded-lg transition-colors cursor-pointer"
               title="Copy share link"
             >
               <Share2 className="w-4 h-4" />
@@ -584,10 +584,11 @@ export default function ManagementOnboardingPage() {
                     });
                     setErrors({ email: '', phone: '' });
                   }}
+                  className="cursor-pointer"
                 >
                   Cancel
                 </Button>
-                <Button type="submit">
+                <Button type="submit" className="cursor-pointer">
                   Create
                 </Button>
               </div>
@@ -782,10 +783,11 @@ export default function ManagementOnboardingPage() {
                     });
                     setErrors({ email: '', phone: '' });
                   }}
+                  className="cursor-pointer"
                 >
                   Cancel
                 </Button>
-                <Button type="submit">
+                <Button type="submit" className="cursor-pointer">
                   Create
                 </Button>
               </div>
@@ -923,10 +925,11 @@ export default function ManagementOnboardingPage() {
                     });
                     setErrors({ email: '', phone: '' });
                   }}
+                  className="cursor-pointer"
                 >
                   Cancel
                 </Button>
-                <Button type="submit">
+                <Button type="submit" className="cursor-pointer">
                   Create
                 </Button>
               </div>

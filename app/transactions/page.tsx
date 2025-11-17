@@ -181,8 +181,8 @@ export default function TransactionsPage() {
   
   return (
     <div className="min-h-screen bg-[#F5F6FA] p-8">
-      <div className="max-w-7xl mx-auto space-y-6">
-        <div>
+      <div className="max-w-7xl mx-auto">
+        <div className="mb-6">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Transactions</h1>
           <p className="text-gray-600">
             Monitor and manage all card-to-cash transactions
