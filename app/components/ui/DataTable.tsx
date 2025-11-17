@@ -113,67 +113,88 @@ export const DataTable = <T extends Record<string, any>>({
   return (
     <div className="w-full space-y-4">
       {/* Toolbar */}
-      <div className="flex flex-wrap items-center gap-4">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         {/* Search */}
-        {searchKeys.length > 0 && (
-          <div className="flex-1 min-w-[200px]">
-            <div className="relative">
+        {searchKeys.length > 0 ? (
+          <div className="flex items-center gap-2">
+            <div className="relative w-64">
               <Search
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--muted-foreground)]"
-                size={18}
+                className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[var(--muted-foreground)]"
+                size={16}
               />
               <Input
                 type="text"
-                placeholder="Search..."
+                placeholder="Search disputes..."
                 value={searchText}
                 onChange={(e) => {
                   setSearchText(e.target.value);
                   setCurrentPage(1);
                 }}
-                className="pl-10"
-                fullWidth
+                className="pl-8 pr-2 h-8 py-1.5 text-sm"
               />
             </div>
+            {searchText && (
+              <button
+                onClick={() => {
+                  setSearchText('');
+                  setCurrentPage(1);
+                }}
+                className="h-8 px-2 text-xs rounded-md bg-[var(--muted)] text-[var(--muted-foreground)] hover:bg-[var(--muted)]/80 cursor-pointer transition"
+              >
+                Clear
+              </button>
+            )}
           </div>
+        ) : (
+          <div />
         )}
         
-        {/* Filters */}
-        {filters.map((filter) => (
-          <Select
-            key={filter.key}
-            value={activeFilters[filter.key] || ''}
-            onChange={(e) => handleFilterChange(filter.key, e.target.value)}
-            options={[{ value: '', label: `All ${filter.label}` }, ...filter.options]}
-            className="min-w-[150px]"
-          />
-        ))}
-        
-        {/* Export */}
-        {enableExport && (
-          <Button
-            variant="secondary"
-            size="sm"
-            icon={Download}
-            onClick={handleExportCSV}
-          >
-            Export CSV
-          </Button>
-        )}
+        {/* Filters + Export */}
+        <div className="flex items-center gap-2 flex-wrap justify-end">
+          {filters.map((filter) => (
+            <Select
+              key={filter.key}
+              value={activeFilters[filter.key] || ''}
+              onChange={(e) => handleFilterChange(filter.key, e.target.value)}
+              options={[{ value: '', label: `All ${filter.label}` }, ...filter.options]}
+              className="min-w-[150px]"
+            />
+          ))}
+          
+          {enableExport && (
+            <Button
+              variant="secondary"
+              size="sm"
+              icon={Download}
+              className="cursor-pointer hover:opacity-90"
+              onClick={handleExportCSV}
+            >
+              Export CSV
+            </Button>
+          )}
+        </div>
       </div>
       
       {/* Table */}
-      <div className="overflow-x-auto border border-[var(--border)] rounded-lg">
-        <table className="w-full">
+      <div className="overflow-x-hidden border border-[var(--border)] rounded-lg">
+        <table className="w-full table-fixed">
           <thead className="bg-[var(--muted)] border-b border-[var(--border)]">
             <tr>
               {columns.map((column) => (
                 <th
                   key={String(column.key)}
-                  className={`${compact ? 'px-3 py-2' : 'px-6 py-3'} text-left text-xs font-medium text-[var(--text-color)] uppercase tracking-wider ${column.sortable ? 'cursor-pointer hover:bg-[var(--border)]' : ''}`}
+                  className={`${compact ? 'px-2 py-2' : 'px-3 py-2'} text-left text-xs font-medium text-[var(--text-color)] uppercase tracking-wider whitespace-nowrap ${
+                    column.sortable ? 'cursor-pointer hover:bg-[var(--border)]' : ''
+                  }`}
+                  style={
+                    column.width
+                      ? { width: column.width, minWidth: column.width, maxWidth: column.width }
+                      : undefined
+                  }
                   onClick={() => column.sortable && handleSort(column.key as keyof T)}
                 >
-                  <div className="flex items-center gap-2">
-                    {column.label}
+                  <div className="flex items-center gap-2 whitespace-nowrap">
+                    <span className="truncate">{column.label}</span>
                     {column.sortable && (
                       <span className="flex flex-col">
                         {sortField === column.key ? (
@@ -212,7 +233,12 @@ export const DataTable = <T extends Record<string, any>>({
                   {columns.map((column) => (
                     <td
                       key={String(column.key)}
-                      className={`${compact ? 'px-3 py-2' : 'px-6 py-4'} text-sm text-[var(--text-color)]`}
+                      className={`${compact ? 'px-2 py-2' : 'px-3 py-3'} text-sm text-[var(--text-color)] whitespace-nowrap truncate`}
+                      style={
+                        column.width
+                          ? { width: column.width, minWidth: column.width, maxWidth: column.width }
+                          : undefined
+                      }
                     >
                       {column.render ? column.render(row) : String(row[column.key] ?? '-')}
                     </td>

@@ -54,6 +54,15 @@ export const fmtNumber = (value: number): string => {
   return new Intl.NumberFormat('en-IN').format(value);
 };
 
+export const fmtDateINDateOnly = (iso: string): string => {
+  const d = new Date(iso);
+  return new Intl.DateTimeFormat('en-IN', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+  }).format(d);
+};
+
 export const fmtCompact = (value: number): string => {
   if (value >= 1000000) {
     return `${(value / 1000000).toFixed(1)}M`;

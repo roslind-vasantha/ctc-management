@@ -9,9 +9,9 @@ import { Input } from '../components/ui/Input';
 import { DataTable } from '../components/ui/DataTable';
 import { useToast } from '../components/ui/Toast';
 import { useStore } from '@/lib/store';
-import { fmtDate, fmtCurrency } from '@/lib/format';
+import { fmtDate, fmtCurrency, fmtDateIN, fmtDateINDateOnly } from '@/lib/format';
+import { Eye } from 'lucide-react';
 import type { ColumnDef, Dispute } from '@/lib/types';
-import { Eye, MessageSquare } from 'lucide-react';
 
 export default function DisputesPage() {
   const { disputes, transactions, customers, updateDispute } = useStore();
@@ -20,19 +20,45 @@ export default function DisputesPage() {
   const [viewingDispute, setViewingDispute] = useState<Dispute | null>(null);
   const [notes, setNotes] = useState('');
   
+  const selectedTransaction = viewingDispute
+    ? transactions.find((t) => t.id === viewingDispute.transactionId)
+    : null;
+  const selectedCustomer = selectedTransaction
+    ? customers.find((c) => c.id === selectedTransaction.customerId)
+    : null;
+  
   // Calculate summary
   const summary = useMemo(() => {
     return {
-      open: disputes.filter((d) => d.status === 'open').length,
-      investigating: disputes.filter((d) => d.status === 'investigating').length,
+      pending: disputes.filter((d) => d.status === 'pending').length,
+      processing: disputes.filter((d) => d.status === 'processing').length,
       resolved: disputes.filter((d) => d.status === 'resolved').length,
       rejected: disputes.filter((d) => d.status === 'rejected').length,
     };
   }, [disputes]);
   
+  type DisputeRow = Dispute & {
+    customerName: string;
+    customerEmail: string;
+    customerPhone: string;
+  };
+
+  const disputeRows: DisputeRow[] = useMemo(() => {
+    return disputes.map((dispute) => {
+      const txn = transactions.find((t) => t.id === dispute.transactionId);
+      const customer = txn ? customers.find((c) => c.id === txn.customerId) : null;
+      return {
+        ...dispute,
+        customerName: customer?.name || 'Unknown customer',
+        customerEmail: customer?.email || 'Not provided',
+        customerPhone: customer?.phone || '—',
+      };
+    });
+  }, [disputes, transactions, customers]);
+  
   const handleStatusUpdate = (
     dispute: Dispute,
-    newStatus: 'investigating' | 'resolved' | 'rejected'
+    newStatus: Dispute['status']
   ) => {
     updateDispute(dispute.id, {
       status: newStatus,
@@ -43,13 +69,36 @@ export default function DisputesPage() {
     setNotes('');
   };
   
-  const columns: ColumnDef<Dispute>[] = [
-    { key: 'id', label: 'Dispute ID', sortable: true },
-    { key: 'transactionId', label: 'Transaction ID', sortable: true },
+  const columns: ColumnDef<DisputeRow>[] = [
     {
-      key: 'raisedBy',
-      label: 'Raised By',
-      render: (row) => <Badge variant="info">{row.raisedBy}</Badge>,
+      key: 'id',
+      label: 'Dispute ID',
+      sortable: true,
+      render: (row) => (
+        <span className="inline-block max-w-[110px] truncate font-medium text-[var(--text-color)]">
+          {row.id}
+        </span>
+      ),
+    },
+    {
+      key: 'transactionId',
+      label: 'Transaction ID',
+      sortable: true,
+      render: (row) => (
+        <span className="inline-block max-w-[120px] truncate text-[var(--text-color)]">
+          {row.transactionId}
+        </span>
+      ),
+    },
+    {
+      key: 'customerName',
+      label: 'Customer',
+      width: 180,
+      render: (row) => (
+        <span className="font-medium text-[var(--text-color)] truncate inline-block w-[180px]">
+          {row.customerName}
+        </span>
+      ),
     },
     {
       key: 'reason',
@@ -69,38 +118,42 @@ export default function DisputesPage() {
       label: 'Status',
       render: (row) => {
         const variant =
-          row.status === 'resolved'
-            ? 'success'
-            : row.status === 'rejected'
-            ? 'danger'
-            : row.status === 'investigating'
+          row.status === 'pending'
             ? 'warning'
-            : 'default';
-        return <Badge variant={variant}>{row.status}</Badge>;
+            : row.status === 'processing'
+            ? 'info'
+            : row.status === 'resolved'
+            ? 'success'
+            : 'danger';
+        const label =
+          row.status.charAt(0).toUpperCase() + row.status.slice(1);
+        return <Badge variant={variant}>{label}</Badge>;
       },
     },
     {
       key: 'updatedAt',
       label: 'Last Updated',
       sortable: true,
-      render: (row) => fmtDate(row.updatedAt, 'relative'),
+      render: (row) => (
+        <span className="whitespace-nowrap">{fmtDateINDateOnly(row.updatedAt)}</span>
+      ),
     },
     {
       key: 'actions',
       label: 'Actions',
+      width: 100,
       render: (row) => (
-        <Button
-          variant="ghost"
-          size="sm"
-          icon={Eye}
+        <button
+          className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium bg-[var(--foreground)] text-white cursor-pointer hover:opacity-90"
           onClick={(e) => {
             e.stopPropagation();
             setViewingDispute(row);
             setNotes(row.notes || '');
           }}
         >
-          View
-        </Button>
+          <Eye className="h-3.5 w-3.5" />
+          <span>View</span>
+        </button>
       ),
     },
   ];
@@ -116,24 +169,28 @@ export default function DisputesPage() {
       
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card header="Open Disputes" value={summary.open} subtext="Requires attention" />
+        <div className="rounded-xl p-6 bg-[var(--foreground)] text-white shadow-sm">
+          <div className="text-sm font-medium">Pending</div>
+          <div className="text-[30px] font-bold mt-1">{summary.pending}</div>
+          <div className="text-sm mt-1 text-white/90">Awaiting review</div>
+        </div>
         <Card
-          header="Investigating"
-          value={summary.investigating}
+          header="Processing"
+          value={summary.processing}
           subtext="Under review"
-          variant="warning"
+          variant="default"
         />
         <Card
           header="Resolved"
           value={summary.resolved}
           subtext="Successfully resolved"
-          variant="success"
+          variant="default"
         />
         <Card
           header="Rejected"
           value={summary.rejected}
           subtext="Rejected disputes"
-          variant="danger"
+          variant="default"
         />
       </div>
       
@@ -141,15 +198,15 @@ export default function DisputesPage() {
       <Card>
         <DataTable
           columns={columns}
-          rows={disputes}
-          searchKeys={['id', 'transactionId']}
+          rows={disputeRows}
+          searchKeys={['id', 'transactionId', 'customerName', 'customerEmail', 'customerPhone']}
           filters={[
             {
               key: 'status',
               label: 'Status',
               options: [
-                { value: 'open', label: 'Open' },
-                { value: 'investigating', label: 'Investigating' },
+                { value: 'pending', label: 'Pending' },
+                { value: 'processing', label: 'Processing' },
                 { value: 'resolved', label: 'Resolved' },
                 { value: 'rejected', label: 'Rejected' },
               ],
@@ -162,14 +219,6 @@ export default function DisputesPage() {
                 { value: 'amount-mismatch', label: 'Amount Mismatch' },
                 { value: 'duplicate', label: 'Duplicate' },
                 { value: 'other', label: 'Other' },
-              ],
-            },
-            {
-              key: 'raisedBy',
-              label: 'Raised By',
-              options: [
-                { value: 'customer', label: 'Customer' },
-                { value: 'retailer', label: 'Retailer' },
               ],
             },
           ]}
@@ -205,14 +254,6 @@ export default function DisputesPage() {
               </div>
               <div>
                 <label className="text-sm font-medium text-[var(--muted-foreground)]">
-                  Raised By
-                </label>
-                <div className="mt-1">
-                  <Badge variant="info">{viewingDispute.raisedBy}</Badge>
-                </div>
-              </div>
-              <div>
-                <label className="text-sm font-medium text-[var(--muted-foreground)]">
                   Reason
                 </label>
                 <p className="text-[var(--text-color)]">
@@ -229,16 +270,19 @@ export default function DisputesPage() {
                 <div className="mt-1">
                   <Badge
                     variant={
-                      viewingDispute.status === 'resolved'
+                      viewingDispute.status === 'pending'
+                        ? 'warning'
+                        : viewingDispute.status === 'processing'
+                        ? 'info'
+                        : viewingDispute.status === 'resolved'
                         ? 'success'
                         : viewingDispute.status === 'rejected'
                         ? 'danger'
-                        : viewingDispute.status === 'investigating'
-                        ? 'warning'
-                        : 'default'
+                        : 'warning'
                     }
                   >
-                    {viewingDispute.status}
+                    {viewingDispute.status.charAt(0).toUpperCase() +
+                      viewingDispute.status.slice(1)}
                   </Badge>
                 </div>
               </div>
@@ -260,77 +304,104 @@ export default function DisputesPage() {
               </div>
             </div>
             
-            {/* Transaction Info */}
-            {(() => {
-              const txn = transactions.find(
-                (t) => t.id === viewingDispute.transactionId
-              );
-              const customer = txn
-                ? customers.find((c) => c.id === txn.customerId)
-                : null;
-              
-              return txn ? (
-                <div className="border-t border-[var(--border)] pt-6">
-                  <h3 className="text-lg font-semibold text-[var(--text-color)] mb-4">
-                    Transaction Information
-                  </h3>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="text-sm font-medium text-[var(--muted-foreground)]">
-                        Amount
-                      </label>
-                      <p className="text-[var(--text-color)]">
-                        {fmtCurrency(txn.amount)}
-                      </p>
-                    </div>
-                    <div>
-                      <label className="text-sm font-medium text-[var(--muted-foreground)]">
-                        Card Brand
-                      </label>
-                      <div className="mt-1">
-                        <Badge variant="info">{txn.cardBrand}</Badge>
-                      </div>
-                    </div>
-                    <div>
-                      <label className="text-sm font-medium text-[var(--muted-foreground)]">
-                        Transaction Status
-                      </label>
-                      <div className="mt-1">
-                        <Badge
-                          variant={
-                            txn.status === 'success'
-                              ? 'success'
-                              : txn.status === 'failed'
-                              ? 'danger'
-                              : 'warning'
-                          }
-                        >
-                          {txn.status}
-                        </Badge>
-                      </div>
-                    </div>
-                    <div>
-                      <label className="text-sm font-medium text-[var(--muted-foreground)]">
-                        Transaction Date
-                      </label>
-                      <p className="text-[var(--text-color)]">
-                        {fmtDate(txn.createdAt, 'long')}
-                      </p>
-                    </div>
-                    {customer && (
-                      <div className="col-span-2">
-                        <label className="text-sm font-medium text-[var(--muted-foreground)]">
-                          Customer
-                        </label>
-                        <p className="text-[var(--text-color)]">
-                          {customer.name} ({customer.email})
-                        </p>
-                      </div>
-                    )}
+            {/* Customer Info */}
+            {selectedCustomer && (
+              <div className="border-t border-[var(--border)] pt-6">
+                <h3 className="text-lg font-semibold text-[var(--text-color)] mb-4">
+                  Customer Details
+                </h3>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-sm font-medium text-[var(--muted-foreground)]">
+                      Name
+                    </label>
+                    <p className="text-[var(--text-color)]">
+                      {selectedCustomer.name}
+                    </p>
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-[var(--muted-foreground)]">
+                      Email
+                    </label>
+                    <p className="text-[var(--text-color)]">
+                      {selectedCustomer.email || 'Not shared'}
+                    </p>
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-[var(--muted-foreground)]">
+                      Phone
+                    </label>
+                    <p className="text-[var(--text-color)]">
+                      {selectedCustomer.phone}
+                    </p>
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-[var(--muted-foreground)]">
+                      Card
+                    </label>
+                    <p className="text-[var(--text-color)]">
+                      {selectedCustomer.cardBrand || 'Card'}{' '}
+                      {selectedCustomer.cardLast4
+                        ? `•••• ${selectedCustomer.cardLast4}`
+                        : ''}
+                    </p>
                   </div>
                 </div>
-              ) : null;
-            })()}
+              </div>
+            )}
+            
+            {/* Transaction Info */}
+            {selectedTransaction && (
+              <div className="border-t border-[var(--border)] pt-6">
+                <h3 className="text-lg font-semibold text-[var(--text-color)] mb-4">
+                  Transaction Information
+                </h3>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-sm font-medium text-[var(--muted-foreground)]">
+                      Amount
+                    </label>
+                    <p className="text-[var(--text-color)]">
+                      {fmtCurrency(selectedTransaction.amount)}
+                    </p>
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-[var(--muted-foreground)]">
+                      Card Brand
+                    </label>
+                    <div className="mt-1">
+                      <Badge variant="info">{selectedTransaction.cardBrand}</Badge>
+                    </div>
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-[var(--muted-foreground)]">
+                      Transaction Status
+                    </label>
+                    <div className="mt-1">
+                      <Badge
+                        variant={
+                          selectedTransaction.status === 'success'
+                            ? 'success'
+                            : selectedTransaction.status === 'failed'
+                            ? 'danger'
+                            : 'warning'
+                        }
+                      >
+                        {selectedTransaction.status}
+                      </Badge>
+                    </div>
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-[var(--muted-foreground)]">
+                      Transaction Date
+                    </label>
+                    <p className="text-[var(--text-color)]">
+                      {fmtDate(selectedTransaction.createdAt, 'long')}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
             
             {/* Timeline */}
             <div className="border-t border-[var(--border)] pt-6">
@@ -349,7 +420,7 @@ export default function DisputesPage() {
                     </p>
                   </div>
                 </div>
-                {viewingDispute.status !== 'open' && (
+                {viewingDispute.status !== 'pending' && (
                   <div className="flex items-start gap-3">
                     <div className="w-2 h-2 bg-[var(--foreground)] rounded-full mt-2"></div>
                     <div>
@@ -379,36 +450,40 @@ export default function DisputesPage() {
             </div>
             
             {/* Actions */}
-            {viewingDispute.status !== 'resolved' &&
-              viewingDispute.status !== 'rejected' && (
-                <div className="border-t border-[var(--border)] pt-6">
-                  <h3 className="text-sm font-semibold text-[var(--text-color)] mb-3">
-                    Actions
-                  </h3>
-                  <div className="flex gap-3">
-                    {viewingDispute.status === 'open' && (
-                      <Button
-                        variant="secondary"
-                        onClick={() => handleStatusUpdate(viewingDispute, 'investigating')}
-                      >
-                        Move to Investigating
-                      </Button>
-                    )}
+            {viewingDispute.status !== 'resolved' && viewingDispute.status !== 'rejected' && (
+              <div className="border-t border-[var(--border)] pt-6">
+                <h3 className="text-sm font-semibold text-[var(--text-color)] mb-3">
+                  Actions
+                </h3>
+                <div className="flex flex-wrap gap-3">
+                  {viewingDispute.status === 'pending' && (
                     <Button
-                      variant="primary"
-                      onClick={() => handleStatusUpdate(viewingDispute, 'resolved')}
+                      variant="secondary"
+                      className="cursor-pointer"
+                      onClick={() => handleStatusUpdate(viewingDispute, 'processing')}
                     >
-                      Resolve Dispute
+                      Mark as Processing
                     </Button>
+                  )}
+                  <Button
+                    variant="primary"
+                    className="cursor-pointer"
+                    onClick={() => handleStatusUpdate(viewingDispute, 'resolved')}
+                  >
+                    Resolve Dispute
+                  </Button>
+                  {(viewingDispute.status === 'pending' || viewingDispute.status === 'processing') && (
                     <Button
                       variant="destructive"
+                      className="cursor-pointer"
                       onClick={() => handleStatusUpdate(viewingDispute, 'rejected')}
                     >
                       Reject Dispute
                     </Button>
-                  </div>
+                  )}
                 </div>
-              )}
+              </div>
+            )}
           </div>
         </Modal>
       )}

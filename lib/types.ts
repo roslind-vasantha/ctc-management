@@ -112,12 +112,14 @@ export type Transaction = {
   completedAt?: string;
 };
 
+export type DisputeStatus = 'pending' | 'processing' | 'resolved' | 'rejected';
+
 export type Dispute = {
   id: ID;
   transactionId: ID;
-  raisedBy: 'customer' | 'retailer';
+  raisedBy: 'customer';
   reason: 'not-credited' | 'amount-mismatch' | 'duplicate' | 'other';
-  status: 'open' | 'investigating' | 'resolved' | 'rejected';
+  status: DisputeStatus;
   notes?: string;
   createdAt: string;
   updatedAt: string;
@@ -141,6 +143,7 @@ export type ColumnDef<T> = {
   label: string;
   sortable?: boolean;
   render?: (row: T) => React.ReactNode;
+  width?: number;
 };
 
 export type FilterOption = {

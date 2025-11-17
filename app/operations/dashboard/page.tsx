@@ -1,8 +1,8 @@
 /**
  * Operations Dashboard
- * 
- * Displays onboarding metrics, approval queues, and profile management stats.
- * Consumes: retailers, customers, distributors
+ *
+ * Displays onboarding metrics, card approvals, and operational queues.
+ * Consumes: retailers, customers, distributors, cardApprovals
  */
 
 'use client';
@@ -13,11 +13,11 @@ import { Card } from '@/app/components/ui/Card';
 import { DataTable } from '@/app/components/ui/DataTable';
 import { LineSeries } from '@/app/components/charts/LineSeries';
 import { BarMini } from '@/app/components/charts/BarMini';
-import { fmtINR, fmtPercent, fmtDateIN } from '@/lib/format';
-import { retailers, customers, distributors } from '@/lib/data';
+import { fmtINR, fmtDateIN } from '@/lib/format';
+import { retailers, customers, distributors, cardApprovals } from '@/lib/data';
 import { getRange, filterByRange, count, groupByDay } from '@/lib/dashboard';
 import type { ColumnDef } from '@/lib/types';
-import { Briefcase, UserPlus, ShieldCheck, Users } from 'lucide-react';
+import { Briefcase } from 'lucide-react';
 
 export default function OperationsDashboardPage() {
   const [days, setDays] = useState<30 | 90>(30);
@@ -27,6 +27,7 @@ export default function OperationsDashboardPage() {
   const rangeRetailers = useMemo(() => filterByRange(retailers, range), [range]);
   const rangeCustomers = useMemo(() => filterByRange(customers, range), [range]);
   const rangeDistributors = useMemo(() => filterByRange(distributors, range), [range]);
+  const rangeCardApprovals = useMemo(() => filterByRange(cardApprovals, range), [range]);
 
   // KPIs
   const pendingOnboardings = useMemo(() => {
@@ -43,7 +44,7 @@ export default function OperationsDashboardPage() {
     );
   }, []);
 
-  const activeProfiles = useMemo(() => {
+  const approvedProfiles = useMemo(() => {
     return (
       count(distributors, (d) => d.kycStatus === 'verified') +
       count(retailers, (r) => r.kycStatus === 'verified') +
@@ -51,37 +52,49 @@ export default function OperationsDashboardPage() {
     );
   }, []);
 
+  const pendingCardApprovals = useMemo(() => {
+    return count(rangeCardApprovals, (approval) => approval.status === 'pending');
+  }, [rangeCardApprovals]);
+
   const approvalTurnaround = useMemo(() => {
-    // For demo: compute average hours from created to now for verified profiles
-    // In real app, would use reviewedAt timestamp
-    const verifiedRetailers = retailers.filter((r) => r.kycStatus === 'verified');
-    const verifiedCustomers = customers.filter((c) => c.kycStatus === 'verified');
-    const allVerified = [...verifiedRetailers, ...verifiedCustomers];
+    const now = new Date();
+    const toHours = (start: string, end?: string) => {
+      const created = new Date(start);
+      const completed = end ? new Date(end) : now;
+      return (completed.getTime() - created.getTime()) / (1000 * 60 * 60);
+    };
 
-    if (allVerified.length === 0) return null;
+    const durations: number[] = [];
 
-    const totalHours = allVerified.reduce((sum, item) => {
-      const created = new Date(item.createdAt);
-      const now = new Date();
-      const hours = (now.getTime() - created.getTime()) / (1000 * 60 * 60);
-      return sum + hours;
-    }, 0);
+    retailers
+      .filter((r) => r.kycStatus === 'verified')
+      .forEach((r) => durations.push(toHours(r.createdAt)));
 
-    return totalHours / allVerified.length;
+    customers
+      .filter((c) => c.kycStatus === 'verified')
+      .forEach((c) => durations.push(toHours(c.createdAt)));
+
+    cardApprovals
+      .filter((approval) => approval.status === 'approved')
+      .forEach((approval) => durations.push(toHours(approval.createdAt, approval.reviewedAt)));
+
+    if (durations.length === 0) return null;
+    const total = durations.reduce((sum, hours) => sum + hours, 0);
+    return total / durations.length;
   }, []);
 
   // Charts data - Funnel
   const funnelData = useMemo(() => {
     const pending = pendingOnboardings;
     const submitted = submittedAwaitingApproval;
-    const approved = activeProfiles;
+    const approved = approvedProfiles;
 
     return [
       { stage: 'Pending', value: pending },
       { stage: 'Submitted', value: submitted },
       { stage: 'Approved', value: approved },
     ];
-  }, [pendingOnboardings, submittedAwaitingApproval, activeProfiles]);
+  }, [pendingOnboardings, submittedAwaitingApproval, approvedProfiles]);
 
   // New profiles per day
   const newProfilesByDay = useMemo(() => {
@@ -124,7 +137,7 @@ export default function OperationsDashboardPage() {
   }, [rangeDistributors, rangeRetailers, rangeCustomers, range]);
 
   // Queue Snapshots
-  const retailersAwaitingApproval = useMemo(() => {
+  const retailersAwaitingApproval = useMemo<RetailerRow[]>(() => {
     return retailers
       .filter((r) => r.onboardingState === 'submitted' && r.kycStatus === 'pending')
       .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
@@ -139,7 +152,7 @@ export default function OperationsDashboardPage() {
       });
   }, []);
 
-  const customersAwaitingApproval = useMemo(() => {
+  const customersAwaitingApproval = useMemo<CustomerRow[]>(() => {
     return customers
       .filter((c) => c.onboardingState === 'submitted' && c.kycStatus === 'pending')
       .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
@@ -154,7 +167,27 @@ export default function OperationsDashboardPage() {
       });
   }, []);
 
-  const retailerColumns: ColumnDef<typeof retailersAwaitingApproval[0]>[] = [
+  const cardApprovalsQueue = useMemo<CardApprovalRow[]>(() => {
+    return cardApprovals
+      .filter((approval) => approval.status === 'pending')
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+      .slice(0, 8)
+      .map((approval) => {
+        const customer = customers.find((c) => c.id === approval.customerId);
+        return {
+          customer: customer?.name || 'Unknown',
+          card: `${approval.cardBrand ?? 'CARD'} ••••${approval.cardLast4}`,
+          limit: approval.limitRequested,
+          submitted: approval.createdAt,
+        };
+      });
+  }, []);
+
+  type RetailerRow = { name: string; distributor: string; submitted: string };
+  type CustomerRow = { name: string; retailer: string; submitted: string };
+  type CardApprovalRow = { customer: string; card: string; limit: number; submitted: string };
+
+  const retailerColumns: ColumnDef<RetailerRow>[] = [
     { key: 'name', label: 'Name', sortable: true },
     { key: 'distributor', label: 'Distributor', sortable: true },
     {
@@ -165,9 +198,26 @@ export default function OperationsDashboardPage() {
     },
   ];
 
-  const customerColumns: ColumnDef<typeof customersAwaitingApproval[0]>[] = [
+  const customerColumns: ColumnDef<CustomerRow>[] = [
     { key: 'name', label: 'Name', sortable: true },
     { key: 'retailer', label: 'Retailer', sortable: true },
+    {
+      key: 'submitted',
+      label: 'Submitted',
+      sortable: true,
+      render: (row) => fmtDateIN(row.submitted),
+    },
+  ];
+
+  const cardApprovalColumns: ColumnDef<CardApprovalRow>[] = [
+    { key: 'customer', label: 'Customer', sortable: true },
+    { key: 'card', label: 'Card', sortable: true },
+    {
+      key: 'limit',
+      label: 'Requested Limit',
+      sortable: true,
+      render: (row) => fmtINR(row.limit),
+    },
     {
       key: 'submitted',
       label: 'Submitted',
@@ -224,17 +274,23 @@ export default function OperationsDashboardPage() {
           variant="info"
         />
         <Card
-          header="Active Profiles"
-          value={activeProfiles}
-          subtext="Verified users"
-          variant="success"
+          header="Pending Card Approvals"
+          value={pendingCardApprovals}
+          subtext="Cards awaiting decision"
+          variant="warning"
         />
         <Card
           header="Approval Turnaround"
           value={approvalTurnaround ? `${Math.round(approvalTurnaround)} hrs` : '—'}
           subtext="Average processing time"
           variant="info"
-        />
+        >
+          <Link href="/credit-card-approvals">
+            <button className="text-xs text-[var(--foreground)] hover:underline">
+              Go to Card Approvals →
+            </button>
+          </Link>
+        </Card>
       </div>
 
       {/* Charts */}
@@ -277,7 +333,7 @@ export default function OperationsDashboardPage() {
       </div>
 
       {/* Queue Snapshots */}
-      <div className="grid gap-4 grid-cols-1 xl:grid-cols-2">
+      <div className="grid gap-4 grid-cols-1 xl:grid-cols-3">
         <Card>
           <div className="p-4">
             <div className="flex items-center justify-between mb-4">
@@ -314,6 +370,27 @@ export default function OperationsDashboardPage() {
             <DataTable
               columns={customerColumns}
               rows={customersAwaitingApproval}
+              searchKeys={[]}
+              defaultPageSize={8}
+              enableExport={false}
+            />
+          </div>
+        </Card>
+        <Card>
+          <div className="p-4">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-sm font-semibold text-[var(--text-color)]">
+                Card Approvals Queue
+              </h3>
+              <Link href="/credit-card-approvals">
+                <button className="text-xs text-[var(--foreground)] hover:underline">
+                  Go to Card Approvals →
+                </button>
+              </Link>
+            </div>
+            <DataTable
+              columns={cardApprovalColumns}
+              rows={cardApprovalsQueue}
               searchKeys={[]}
               defaultPageSize={8}
               enableExport={false}

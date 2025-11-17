@@ -43,7 +43,7 @@ export default function FinanceDashboardPage() {
     const chargebacks = sum(
       disputes.filter((d) => {
         const txn = successfulTxns.find((t) => t.id === d.transactionId);
-        return txn && (d.status === 'open' || d.status === 'investigating');
+        return txn && (d.status === 'pending' || d.status === 'processing');
       }),
       (d) => {
         const txn = successfulTxns.find((t) => t.id === d.transactionId);

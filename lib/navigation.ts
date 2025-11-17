@@ -29,7 +29,6 @@ export const navSections: NavSection[] = [
     items: [
       { label: 'Risk Dashboard', href: '/risk/dashboard', icon: BarChart3 },
       { label: 'Disputes', href: '/disputes', icon: AlertTriangle },
-      { label: 'Credit Card Approvals', href: '/credit-card-approvals', icon: CheckCircle2 },
     ],
   },
   {
@@ -37,7 +36,7 @@ export const navSections: NavSection[] = [
     items: [
       { label: 'Finance Dashboard', href: '/finance/dashboard', icon: LineChart },
       { label: 'Transactions', href: '/transactions', icon: CreditCard },
-      // { label: 'Commission Management', href: '/commission-management', icon: Percent },
+      { label: 'Commission Management', href: '/commission-management', icon: Percent },
     ],
   },
   {
@@ -46,6 +45,7 @@ export const navSections: NavSection[] = [
       { label: 'Operations Dashboard', href: '/operations/dashboard', icon: BarChart2 },
       { label: 'Management Onboarding', href: '/management-onboarding', icon: UserPlus },
       { label: 'Onboarding Approvals', href: '/onboarding-approval', icon: ShieldCheck },
+      { label: 'Credit Card Approvals', href: '/credit-card-approvals', icon: CheckCircle2 },
       { label: 'Profile Management', href: '/profile-management', icon: Users },
     ],
   },

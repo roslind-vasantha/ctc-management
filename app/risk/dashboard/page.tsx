@@ -1,8 +1,8 @@
 /**
  * Risk & Control Dashboard
- * 
- * Displays risk metrics, dispute tracking, card approval status, and KYC pass rates.
- * Consumes: disputes, transactions, cardApprovals, retailers, customers
+ *
+ * Focuses on dispute activity, KYC health, and systemic risk signals.
+ * Consumes: disputes, transactions, retailers, customers
  */
 
 'use client';
@@ -14,65 +14,65 @@ import { Badge } from '@/app/components/ui/Badge';
 import { Button } from '@/app/components/ui/Button';
 import { LineSeries } from '@/app/components/charts/LineSeries';
 import { BarMini } from '@/app/components/charts/BarMini';
-import { fmtINR, fmtPercent, fmtDateIN } from '@/lib/format';
-import { transactions, disputes, cardApprovals, retailers, customers } from '@/lib/data';
+import { fmtPercent } from '@/lib/format';
+import { transactions, disputes, retailers, customers } from '@/lib/data';
 import { getRange, filterByRange, sum, count, percent, groupByDay, groupBy } from '@/lib/dashboard';
-import { ShieldAlert, AlertTriangle, CheckCircle2, ExternalLink } from 'lucide-react';
+import { ShieldAlert, AlertTriangle } from 'lucide-react';
 
 export default function RiskDashboardPage() {
   const [days, setDays] = useState<30 | 90>(30);
   const range = useMemo(() => getRange(days), [days]);
 
   // Filter data by range
-  const rangeDisputes = useMemo(() => filterByRange(disputes, range), [range]);
-  const rangeTransactions = useMemo(() => filterByRange(transactions, range), [range]);
+  const rangeRetailers = useMemo(() => filterByRange(retailers, range), [range]);
+  const rangeCustomers = useMemo(() => filterByRange(customers, range), [range]);
 
   // KPIs
-  const openDisputes = useMemo(
-    () => count(disputes, (d) => d.status === 'open' || d.status === 'investigating'),
+  const pendingDisputes = useMemo(
+    () => count(disputes, (d) => d.status === 'pending'),
+    []
+  );
+  const processingDisputes = useMemo(
+    () => count(disputes, (d) => d.status === 'processing'),
+    []
+  );
+  const resolvedDisputes = useMemo(
+    () => count(disputes, (d) => d.status === 'resolved'),
+    []
+  );
+  const rejectedDisputes = useMemo(
+    () => count(disputes, (d) => d.status === 'rejected'),
     []
   );
 
-  const disputeRate = useMemo(() => {
-    const totalDisputes = count(rangeDisputes);
-    const totalTxns = count(rangeTransactions);
-    return percent(totalDisputes, totalTxns);
-  }, [rangeDisputes, rangeTransactions]);
-
-  const pendingCardApprovals = useMemo(
-    () => count(cardApprovals, (c) => c.status === 'pending'),
-    []
-  );
-
-  const kycPassRate = useMemo(() => {
-    const allUsers = [...retailers, ...customers];
-    const verified = count(allUsers, (u) => u.kycStatus === 'verified');
-    const total = count(allUsers, (u) => u.kycStatus !== undefined);
-    return percent(verified, total);
-  }, []);
+  const kycFailureRate = useMemo(() => {
+    const reviewed = [...rangeRetailers, ...rangeCustomers].filter(
+      (profile) => profile.kycStatus === 'verified' || profile.kycStatus === 'rejected'
+    );
+    const failures = reviewed.filter((profile) => profile.kycStatus === 'rejected');
+    return percent(failures.length, reviewed.length);
+  }, [rangeRetailers, rangeCustomers]);
 
   // Charts data
-  const disputesByDay = useMemo(() => {
-    const opened = groupByDay(
-      disputes.filter((d) => d.status === 'open' || d.status === 'investigating'),
-      () => 1
-    );
-    const resolved = groupByDay(
-      disputes.filter((d) => d.status === 'resolved'),
+  const disputesTrend = useMemo(() => {
+    const created = groupByDay(disputes, () => 1);
+    const resolvedSeries = groupByDay(
+      disputes
+        .filter((d) => d.status === 'resolved')
+        .map((d) => ({ ...d, createdAt: d.updatedAt })),
       () => 1
     );
 
-    // Merge by date
-    const dateMap = new Map<string, { date: string; opened: number; resolved: number }>();
-    opened.forEach((item) => {
-      dateMap.set(item.date, { date: item.date, opened: item.value, resolved: 0 });
+    const dateMap = new Map<string, { date: string; raised: number; resolved: number }>();
+    created.forEach((item) => {
+      dateMap.set(item.date, { date: item.date, raised: item.value, resolved: 0 });
     });
-    resolved.forEach((item) => {
+    resolvedSeries.forEach((item) => {
       const existing = dateMap.get(item.date);
       if (existing) {
         existing.resolved = item.value;
       } else {
-        dateMap.set(item.date, { date: item.date, opened: 0, resolved: item.value });
+        dateMap.set(item.date, { date: item.date, raised: 0, resolved: item.value });
       }
     });
 
@@ -82,7 +82,7 @@ export default function RiskDashboardPage() {
         return date >= range.from && date <= range.to;
       })
       .sort((a, b) => a.date.localeCompare(b.date));
-  }, [range]);
+  }, [disputes, range]);
 
   const chargebackCustomers = useMemo(() => {
     const customerDisputes = groupBy(disputes, (d) => {
@@ -109,17 +109,41 @@ export default function RiskDashboardPage() {
   }, []);
 
   // Risk Alerts
+  const disputesByDateMap = useMemo(() => {
+    const map = new Map<string, number>();
+    disputes.forEach((d) => {
+      const key = new Date(d.createdAt).toISOString().split('T')[0];
+      map.set(key, (map.get(key) || 0) + 1);
+    });
+    return map;
+  }, []);
+
+  const transactionsByDateMap = useMemo(() => {
+    const map = new Map<string, number>();
+    transactions.forEach((t) => {
+      const key = new Date(t.createdAt).toISOString().split('T')[0];
+      map.set(key, (map.get(key) || 0) + 1);
+    });
+    return map;
+  }, []);
+
   const riskAlerts = useMemo(() => {
     const alerts: Array<{ type: string; message: string; severity: 'high' | 'medium' }> = [];
 
-    // High-value pending approvals
-    const highValueApprovals = cardApprovals.filter(
-      (a) => a.status === 'pending' && a.limitRequested > 200000
-    );
-    if (highValueApprovals.length > 0) {
+    // High-value disputes
+    const HIGH_VALUE_THRESHOLD = 150000; // ₹1.5L+
+    const highValueDisputes = disputes.filter((d) => {
+      const txn = transactions.find((t) => t.id === d.transactionId);
+      return (
+        txn &&
+        txn.amount >= HIGH_VALUE_THRESHOLD &&
+        (d.status === 'pending' || d.status === 'processing')
+      );
+    });
+    if (highValueDisputes.length > 0) {
       alerts.push({
-        type: 'High-value approvals',
-        message: `${highValueApprovals.length} pending card approvals with limit > ₹2,00,000`,
+        type: 'High-value disputes',
+        message: `${highValueDisputes.length} disputes on tickets ≥ ₹1.5L`,
         severity: 'high',
       });
     }
@@ -137,10 +161,13 @@ export default function RiskDashboardPage() {
     }
 
     // Retailers with >3 open disputes
-    const retailerDisputes = groupBy(disputes.filter((d) => d.status === 'open'), (d) => {
-      const txn = transactions.find((t) => t.id === d.transactionId);
-      return txn?.retailerId || '';
-    });
+    const retailerDisputes = groupBy(
+      disputes.filter((d) => d.status === 'pending' || d.status === 'processing'),
+      (d) => {
+        const txn = transactions.find((t) => t.id === d.transactionId);
+        return txn?.retailerId || '';
+      }
+    );
     const problematicRetailers = Object.entries(retailerDisputes).filter(
       ([, list]) => list.length > 3
     );
@@ -152,8 +179,44 @@ export default function RiskDashboardPage() {
       });
     }
 
+    // Sudden spike in dispute rate (today vs 7-day avg)
+    const today = new Date();
+    const toKey = (date: Date) => date.toISOString().split('T')[0];
+    const getRate = (date: Date) => {
+      const key = toKey(date);
+      const disputesCount = disputesByDateMap.get(key) || 0;
+      const txnsCount = transactionsByDateMap.get(key) || 0;
+      if (txnsCount === 0) return null;
+      return disputesCount / txnsCount;
+    };
+
+    const todayRate = getRate(today) ?? 0;
+    let rollingSum = 0;
+    let rollingSamples = 0;
+    for (let i = 1; i <= 7; i++) {
+      const date = new Date(today.getTime() - i * 24 * 60 * 60 * 1000);
+      const rate = getRate(date);
+      if (rate !== null) {
+        rollingSum += rate;
+        rollingSamples += 1;
+      }
+    }
+    const rollingAvg = rollingSamples > 0 ? rollingSum / rollingSamples : null;
+    if (rollingAvg && todayRate > rollingAvg * 1.5) {
+      alerts.push({
+        type: 'Dispute rate spike',
+        message: `Today's dispute rate is ${fmtPercent(todayRate, 2)} vs ${fmtPercent(
+          rollingAvg,
+          2
+        )} 7-day avg`,
+        severity: 'medium',
+      });
+    }
+
     return alerts;
-  }, []);
+  }, [disputes, transactions, disputesByDateMap, transactionsByDateMap]);
+
+  const highRiskSignals = riskAlerts.length;
 
   return (
     <div className="space-y-6">
@@ -188,31 +251,47 @@ export default function RiskDashboardPage() {
       </div>
       <p className="text-sm text-[var(--muted-foreground)]">Updated just now</p>
 
-      {/* KPI Grid */}
+      {/* Dispute Status KPIs */}
       <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 xl:grid-cols-4">
         <Card
-          header="Open Disputes"
-          value={openDisputes}
-          subtext="Requiring attention"
+          header="Pending Disputes"
+          value={pendingDisputes}
+          subtext="Awaiting triage"
           variant="warning"
         />
         <Card
-          header="Dispute Rate"
-          value={fmtPercent(disputeRate, 2)}
-          subtext={`Over last ${days} days`}
+          header="Processing Disputes"
+          value={processingDisputes}
+          subtext="Under investigation"
           variant="info"
         />
         <Card
-          header="Pending Card Approvals"
-          value={pendingCardApprovals}
-          subtext="Awaiting review"
+          header="Resolved Disputes"
+          value={resolvedDisputes}
+          subtext="Closed with action"
+          variant="success"
+        />
+        <Card
+          header="Rejected Disputes"
+          value={rejectedDisputes}
+          subtext="Dismissed cases"
+          variant="danger"
+        />
+      </div>
+
+      {/* Risk Health KPIs */}
+      <div className="grid gap-4 grid-cols-1 sm:grid-cols-2">
+        <Card
+          header="KYC Failure Rate"
+          value={fmtPercent(kycFailureRate, 1)}
+          subtext={`Reviewed profiles (${days}d)`}
           variant="warning"
         />
         <Card
-          header="KYC Pass Rate"
-          value={fmtPercent(kycPassRate, 1)}
-          subtext="Verified profiles"
-          variant="success"
+          header="High-Risk Signals"
+          value={highRiskSignals}
+          subtext="Active alerts"
+          variant="danger"
         />
       </div>
 
@@ -222,12 +301,12 @@ export default function RiskDashboardPage() {
           <Card>
             <div className="p-4">
               <h3 className="text-sm font-semibold text-[var(--text-color)] mb-4">
-                Disputes Opened vs Resolved
+                Disputes Raised vs Resolved
               </h3>
               <LineSeries
-                data={disputesByDay}
+                data={disputesTrend}
                 lines={[
-                  { dataKey: 'opened', name: 'Opened', color: 'var(--danger-border)' },
+                  { dataKey: 'raised', name: 'Raised', color: 'var(--danger-border)' },
                   { dataKey: 'resolved', name: 'Resolved', color: 'var(--success-border)' },
                 ]}
                 height={300}
@@ -264,11 +343,6 @@ export default function RiskDashboardPage() {
                 <Link href="/disputes">
                   <Button variant="secondary" size="sm" icon={AlertTriangle}>
                     View Disputes
-                  </Button>
-                </Link>
-                <Link href="/credit-card-approvals">
-                  <Button variant="secondary" size="sm" icon={CheckCircle2}>
-                    View Approvals
                   </Button>
                 </Link>
               </div>

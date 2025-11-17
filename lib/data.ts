@@ -447,14 +447,14 @@ for (let i = 0; i < 600; i++) {
 
 // Disputes
 export const disputes: Dispute[] = [
-  { id: 'DIS001', transactionId: 'T000042', raisedBy: 'customer', reason: 'not-credited', status: 'open', notes: 'Customer claims amount not received in debit card', createdAt: daysAgo(5), updatedAt: daysAgo(5) },
-  { id: 'DIS002', transactionId: 'T000087', raisedBy: 'retailer', reason: 'amount-mismatch', status: 'investigating', notes: 'Retailer reports discrepancy in commission', createdAt: daysAgo(8), updatedAt: daysAgo(2) },
-  { id: 'DIS003', transactionId: 'T000123', raisedBy: 'customer', reason: 'duplicate', status: 'investigating', notes: 'Customer charged twice', createdAt: daysAgo(12), updatedAt: daysAgo(7) },
+  { id: 'DIS001', transactionId: 'T000042', raisedBy: 'customer', reason: 'not-credited', status: 'pending', notes: 'Customer claims amount not received in card account', createdAt: daysAgo(5), updatedAt: daysAgo(5) },
+  { id: 'DIS002', transactionId: 'T000087', raisedBy: 'customer', reason: 'amount-mismatch', status: 'processing', notes: 'Customer reports discrepancy in charged amount', createdAt: daysAgo(8), updatedAt: daysAgo(2) },
+  { id: 'DIS003', transactionId: 'T000123', raisedBy: 'customer', reason: 'duplicate', status: 'processing', notes: 'Customer charged twice', createdAt: daysAgo(12), updatedAt: daysAgo(7) },
   { id: 'DIS004', transactionId: 'T000156', raisedBy: 'customer', reason: 'not-credited', status: 'resolved', notes: 'Issue resolved, amount credited', createdAt: daysAgo(15), updatedAt: daysAgo(10) },
-  { id: 'DIS005', transactionId: 'T000189', raisedBy: 'retailer', reason: 'other', status: 'resolved', notes: 'Retailer inquiry about processing time', createdAt: daysAgo(20), updatedAt: daysAgo(18) },
+  { id: 'DIS005', transactionId: 'T000189', raisedBy: 'customer', reason: 'other', status: 'resolved', notes: 'Customer inquiry about processing time', createdAt: daysAgo(20), updatedAt: daysAgo(18) },
   { id: 'DIS006', transactionId: 'T000234', raisedBy: 'customer', reason: 'amount-mismatch', status: 'rejected', notes: 'No evidence of mismatch found', createdAt: daysAgo(25), updatedAt: daysAgo(22) },
-  { id: 'DIS007', transactionId: 'T000267', raisedBy: 'customer', reason: 'not-credited', status: 'open', notes: 'Pending bank verification', createdAt: daysAgo(3), updatedAt: daysAgo(3) },
-  { id: 'DIS008', transactionId: 'T000298', raisedBy: 'retailer', reason: 'duplicate', status: 'investigating', notes: 'Checking transaction logs', createdAt: daysAgo(6), updatedAt: daysAgo(4) },
+  { id: 'DIS007', transactionId: 'T000267', raisedBy: 'customer', reason: 'not-credited', status: 'pending', notes: 'Pending bank verification', createdAt: daysAgo(3), updatedAt: daysAgo(3) },
+  { id: 'DIS008', transactionId: 'T000298', raisedBy: 'customer', reason: 'duplicate', status: 'processing', notes: 'Customer flagged suspected duplicate swipe', createdAt: daysAgo(6), updatedAt: daysAgo(4) },
 ];
 
 // Credit Card Approvals (prioritize RuPay)
