@@ -23,6 +23,13 @@ const daysAgo = (days: number): string => {
   return date.toISOString();
 };
 
+const formatDateDDMMYYYY = (date: Date): string => {
+  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const year = date.getFullYear();
+  return `${day}/${month}/${year}`;
+};
+
 // Indian states/UTs
 const STATES = [
   'Maharashtra',
@@ -244,7 +251,7 @@ const generateRetailerOnboardingData = (id: string, onboardingState: 'pending' |
 };
 
 // 24 Retailers (3 per distributor) - Mix of pending (30%) and submitted (70%)
-export const retailers: Retailer[] = [
+const baseRetailers: Retailer[] = [
   // D001 - Maharashtra (R001-R003: 2 submitted, 1 pending)
   { id: 'R001', distributorId: 'D001', name: 'Mumbai Quick Cash', email: 'north@mumbai-qc.in', phone: inPhone(11), city: 'Mumbai', kycStatus: 'verified', monthVolume: 52, monthGmv: 208000, createdAt: daysAgo(300), active: true, onboardingState: 'submitted', ...generateRetailerOnboardingData('R001', 'submitted') },
   { id: 'R002', distributorId: 'D001', name: 'Pune Express Money', email: 'center@pune-em.in', phone: inPhone(12), city: 'Pune', kycStatus: 'verified', monthVolume: 48, monthGmv: 192000, createdAt: daysAgo(290), active: true, onboardingState: 'submitted', ...generateRetailerOnboardingData('R002', 'submitted') },
@@ -286,6 +293,111 @@ export const retailers: Retailer[] = [
   { id: 'R024', distributorId: 'D008', name: 'Lucknow Money Point', email: 'mcp@lucknow-mp.in', phone: inPhone(83), city: 'Lucknow', kycStatus: 'pending', monthVolume: 10, monthGmv: 40000, createdAt: daysAgo(30), active: true, onboardingState: 'pending', ...generateRetailerOnboardingData('R024', 'pending') },
 ];
 
+const additionalSubmittedRetailers: Retailer[] = [
+  {
+    id: 'R101',
+    distributorId: 'D005',
+    name: 'Rohan Sharma',
+    email: 'rohan.sharma@sharmafin.in',
+    phone: inPhone(901),
+    city: 'New Delhi',
+    shopName: 'Sharma FinServe',
+    aadhaarNumber: sampleAadhaar(101),
+    panNumber: samplePAN(101),
+    submittedAt: '12/08/2024',
+    status: 'submitted',
+    kycStatus: 'verified',
+    monthVolume: 18,
+    monthGmv: 72000,
+    createdAt: daysAgo(18),
+    active: true,
+    onboardingState: 'submitted',
+    ...generateRetailerOnboardingData('R101', 'submitted'),
+  },
+  {
+    id: 'R102',
+    distributorId: 'D002',
+    name: 'Karthik Menon',
+    email: 'karthik.menon@udayafinance.in',
+    phone: inPhone(902),
+    city: 'Bengaluru',
+    shopName: 'Menon Digital Kendra',
+    aadhaarNumber: sampleAadhaar(102),
+    panNumber: samplePAN(102),
+    submittedAt: '10/08/2024',
+    status: 'submitted',
+    kycStatus: 'verified',
+    monthVolume: 22,
+    monthGmv: 88000,
+    createdAt: daysAgo(21),
+    active: true,
+    onboardingState: 'submitted',
+    ...generateRetailerOnboardingData('R102', 'submitted'),
+  },
+  {
+    id: 'R103',
+    distributorId: 'D007',
+    name: 'Priya Nambiar',
+    email: 'priya.nambiar@malabarfinance.in',
+    phone: inPhone(903),
+    city: 'Kochi',
+    shopName: 'Nambiar Financials',
+    aadhaarNumber: sampleAadhaar(103),
+    panNumber: samplePAN(103),
+    submittedAt: '08/08/2024',
+    status: 'submitted',
+    kycStatus: 'verified',
+    monthVolume: 20,
+    monthGmv: 80000,
+    createdAt: daysAgo(25),
+    active: true,
+    onboardingState: 'submitted',
+    ...generateRetailerOnboardingData('R103', 'submitted'),
+  },
+  {
+    id: 'R104',
+    distributorId: 'D001',
+    name: 'Mahesh Patil',
+    email: 'mahesh.patil@punefin.com',
+    phone: inPhone(904),
+    city: 'Pune',
+    shopName: 'Patil Payments',
+    aadhaarNumber: sampleAadhaar(104),
+    panNumber: samplePAN(104),
+    submittedAt: '06/08/2024',
+    status: 'submitted',
+    kycStatus: 'verified',
+    monthVolume: 24,
+    monthGmv: 96000,
+    createdAt: daysAgo(28),
+    active: true,
+    onboardingState: 'submitted',
+    ...generateRetailerOnboardingData('R104', 'submitted'),
+  },
+  {
+    id: 'R105',
+    distributorId: 'D004',
+    name: 'Aditi Rao',
+    email: 'aditi.rao@charminarfinance.in',
+    phone: inPhone(905),
+    city: 'Hyderabad',
+    shopName: 'Rao Digital Seva',
+    aadhaarNumber: sampleAadhaar(105),
+    panNumber: samplePAN(105),
+    submittedAt: '04/08/2024',
+    status: 'submitted',
+    kycStatus: 'verified',
+    monthVolume: 19,
+    monthGmv: 76000,
+    createdAt: daysAgo(32),
+    active: true,
+    onboardingState: 'submitted',
+    ...generateRetailerOnboardingData('R105', 'submitted'),
+  },
+];
+
+export const retailers: Retailer[] = [...baseRetailers, ...additionalSubmittedRetailers];
+
 // Helper to generate customer onboarding data
 // Business Rule: Customer reaches "submitted" state ONLY when ALL sections are complete:
 //   1. Personal Information: Name, Phone, Email, Date of Birth
@@ -301,6 +413,8 @@ const generateCustomerOnboardingData = (custIdx: number, onboardingState: 'pendi
     const birthYear = 1985 + (custIdx % 15);
     const birthMonth = (custIdx % 12) + 1;
     const birthDay = (custIdx % 28) + 1;
+    const submittedDate = new Date();
+    submittedDate.setDate(submittedDate.getDate() - ((custIdx % 15) + 1));
     
     return {
       // Personal Information - ALL required
@@ -312,6 +426,7 @@ const generateCustomerOnboardingData = (custIdx: number, onboardingState: 'pendi
       // Document Verification - BOTH required
       aadhaarDocument: `aadhaar_C${String(custIdx + 1).padStart(3, '0')}.pdf`,
       panDocument: `pan_C${String(custIdx + 1).padStart(3, '0')}.pdf`,
+      submittedAt: formatDateDDMMYYYY(submittedDate),
     };
   }
   
@@ -361,6 +476,199 @@ retailers.forEach((retailer, rIdx) => {
     });
   }
 });
+
+const extraPendingCustomers: Customer[] = [
+  {
+    id: 'C201',
+    retailerId: 'R101',
+    name: 'Ishaan Kulkarni',
+    phone: inPhone(1301),
+    email: 'ishaan.kulkarni@example.in',
+    cardLast4: '7201',
+    cardBrand: 'RUPAY',
+    kycStatus: 'pending',
+    createdAt: daysAgo(12),
+    active: true,
+    onboardingState: 'pending',
+    status: 'pending',
+  },
+  {
+    id: 'C202',
+    retailerId: 'R102',
+    name: 'Nisha Pillai',
+    phone: inPhone(1302),
+    email: 'nisha.pillai@example.in',
+    cardLast4: '7202',
+    cardBrand: 'RUPAY',
+    kycStatus: 'pending',
+    createdAt: daysAgo(9),
+    active: true,
+    onboardingState: 'pending',
+    status: 'pending',
+  },
+  {
+    id: 'C203',
+    retailerId: 'R103',
+    name: 'Harsh Vardhan',
+    phone: inPhone(1303),
+    email: 'harsh.vardhan@example.in',
+    cardLast4: '7203',
+    cardBrand: 'RUPAY',
+    kycStatus: 'pending',
+    createdAt: daysAgo(14),
+    active: true,
+    onboardingState: 'pending',
+    status: 'pending',
+  },
+  {
+    id: 'C204',
+    retailerId: 'R104',
+    name: 'Shruti Deshpande',
+    phone: inPhone(1304),
+    email: 'shruti.deshpande@example.in',
+    cardLast4: '7204',
+    cardBrand: 'RUPAY',
+    kycStatus: 'pending',
+    createdAt: daysAgo(11),
+    active: true,
+    onboardingState: 'pending',
+    status: 'pending',
+  },
+  {
+    id: 'C205',
+    retailerId: 'R105',
+    name: 'Rajeev Chatterjee',
+    phone: inPhone(1305),
+    email: 'rajeev.chatterjee@example.in',
+    cardLast4: '7205',
+    cardBrand: 'RUPAY',
+    kycStatus: 'pending',
+    createdAt: daysAgo(7),
+    active: true,
+    onboardingState: 'pending',
+    status: 'pending',
+  },
+];
+
+const extraSubmittedCustomers: Customer[] = [
+  {
+    id: 'C206',
+    retailerId: 'R101',
+    name: 'Arjun Verma',
+    email: 'arjun.verma@example.in',
+    phone: inPhone(1310),
+    dateOfBirth: '1990-05-18',
+    companyName: 'Infosys',
+    designation: 'Senior Analyst',
+    salaryPerAnnum: 850000,
+    aadhaarDocument: 'aadhaar_C206.pdf',
+    panDocument: 'pan_C206.pdf',
+    aadhaarNumber: sampleAadhaar(206),
+    panNumber: samplePAN(206),
+    submittedAt: '11/08/2024',
+    cardLast4: '7301',
+    cardBrand: 'RUPAY',
+    kycStatus: 'verified',
+    createdAt: daysAgo(10),
+    active: true,
+    onboardingState: 'submitted',
+    status: 'submitted',
+  },
+  {
+    id: 'C207',
+    retailerId: 'R102',
+    name: 'Sneha Gupta',
+    email: 'sneha.gupta@example.in',
+    phone: inPhone(1311),
+    dateOfBirth: '1992-03-22',
+    companyName: 'TCS',
+    designation: 'Project Manager',
+    salaryPerAnnum: 1100000,
+    aadhaarDocument: 'aadhaar_C207.pdf',
+    panDocument: 'pan_C207.pdf',
+    aadhaarNumber: sampleAadhaar(207),
+    panNumber: samplePAN(207),
+    submittedAt: '09/08/2024',
+    cardLast4: '7302',
+    cardBrand: 'RUPAY',
+    kycStatus: 'verified',
+    createdAt: daysAgo(12),
+    active: true,
+    onboardingState: 'submitted',
+    status: 'submitted',
+  },
+  {
+    id: 'C208',
+    retailerId: 'R103',
+    name: 'Dhruv Nair',
+    email: 'dhruv.nair@example.in',
+    phone: inPhone(1312),
+    dateOfBirth: '1989-11-05',
+    companyName: 'HCL Technologies',
+    designation: 'Operations Lead',
+    salaryPerAnnum: 920000,
+    aadhaarDocument: 'aadhaar_C208.pdf',
+    panDocument: 'pan_C208.pdf',
+    aadhaarNumber: sampleAadhaar(208),
+    panNumber: samplePAN(208),
+    submittedAt: '08/08/2024',
+    cardLast4: '7303',
+    cardBrand: 'RUPAY',
+    kycStatus: 'verified',
+    createdAt: daysAgo(13),
+    active: true,
+    onboardingState: 'submitted',
+    status: 'submitted',
+  },
+  {
+    id: 'C209',
+    retailerId: 'R104',
+    name: 'Meera Shenoy',
+    email: 'meera.shenoy@example.in',
+    phone: inPhone(1313),
+    dateOfBirth: '1991-07-14',
+    companyName: 'ICICI Bank',
+    designation: 'Relationship Manager',
+    salaryPerAnnum: 980000,
+    aadhaarDocument: 'aadhaar_C209.pdf',
+    panDocument: 'pan_C209.pdf',
+    aadhaarNumber: sampleAadhaar(209),
+    panNumber: samplePAN(209),
+    submittedAt: '07/08/2024',
+    cardLast4: '7304',
+    cardBrand: 'RUPAY',
+    kycStatus: 'verified',
+    createdAt: daysAgo(15),
+    active: true,
+    onboardingState: 'submitted',
+    status: 'submitted',
+  },
+  {
+    id: 'C210',
+    retailerId: 'R105',
+    name: 'Vishal Reddy',
+    email: 'vishal.reddy@example.in',
+    phone: inPhone(1314),
+    dateOfBirth: '1988-02-27',
+    companyName: 'Tech Mahindra',
+    designation: 'Product Lead',
+    salaryPerAnnum: 1150000,
+    aadhaarDocument: 'aadhaar_C210.pdf',
+    panDocument: 'pan_C210.pdf',
+    aadhaarNumber: sampleAadhaar(210),
+    panNumber: samplePAN(210),
+    submittedAt: '06/08/2024',
+    cardLast4: '7305',
+    cardBrand: 'RUPAY',
+    kycStatus: 'verified',
+    createdAt: daysAgo(16),
+    active: true,
+    onboardingState: 'submitted',
+    status: 'submitted',
+  },
+];
+
+customers.push(...extraPendingCustomers, ...extraSubmittedCustomers);
 
 // Commission Rules
 export const commissionRules: CommissionRule[] = [

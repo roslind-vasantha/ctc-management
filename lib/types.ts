@@ -53,6 +53,12 @@ export type Retailer = {
   commissionAmount?: number;
   // Agreement
   agreementDocument?: string;
+  // Extended onboarding metadata
+  shopName?: string;
+  aadhaarNumber?: string;
+  panNumber?: string;
+  submittedAt?: string;
+  status?: OnboardingState;
   monthVolume: number;
   monthGmv: number;
   createdAt: string;
@@ -75,6 +81,10 @@ export type Customer = {
   // Document Verification
   aadhaarDocument?: string;
   panDocument?: string;
+  aadhaarNumber?: string;
+  panNumber?: string;
+  submittedAt?: string;
+  status?: OnboardingState;
   // Card Details
   cardLast4?: string;
   cardBrand?: 'RUPAY' | 'VISA' | 'MASTERCARD' | 'AMEX';

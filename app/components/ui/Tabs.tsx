@@ -49,7 +49,7 @@ export const Tabs = ({ tabs, defaultTab, onChange }: TabsProps) => {
             onClick={() => handleTabChange(tab.id)}
             onKeyDown={(e) => handleKeyDown(e, tab.id)}
             className={`
-              relative px-5 py-3 font-medium text-sm transition-all rounded-t-lg
+              relative px-5 py-3 font-medium text-sm transition-all rounded-t-lg cursor-pointer
               focus:outline-none
               ${
                 activeTab === tab.id

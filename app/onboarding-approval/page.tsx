@@ -137,7 +137,7 @@ export default function OnboardingApprovalPage() {
       key: 'createdAt',
       label: 'Submitted',
       sortable: true,
-      render: (row) => fmtDateIN(row.createdAt),
+      render: (row) => (isSubmittedTab && row.submittedAt ? row.submittedAt : fmtDateIN(row.createdAt)),
     },
     {
       key: 'actions',
@@ -150,6 +150,7 @@ export default function OnboardingApprovalPage() {
             e.stopPropagation();
             setReviewingRetailer(row);
           }}
+          className="cursor-pointer bg-[var(--primary)] text-white hover:bg-[var(--primary-accent)]"
         >
           {/* Changed "View" → "Review" for Submitted tabs only per new UX requirement */}
           {isSubmittedTab ? 'Review' : 'View'}
@@ -168,7 +169,7 @@ export default function OnboardingApprovalPage() {
       key: 'createdAt',
       label: 'Submitted',
       sortable: true,
-      render: (row) => fmtDateIN(row.createdAt),
+      render: (row) => (isSubmittedTab && row.submittedAt ? row.submittedAt : fmtDateIN(row.createdAt)),
     },
     {
       key: 'actions',
@@ -181,6 +182,7 @@ export default function OnboardingApprovalPage() {
             e.stopPropagation();
             setReviewingCustomer(row);
           }}
+          className="cursor-pointer bg-[var(--primary)] text-white hover:bg-[var(--primary-accent)]"
         >
           {/* Changed "View" → "Review" for Submitted tabs only per new UX requirement */}
           {isSubmittedTab ? 'Review' : 'View'}
@@ -389,7 +391,7 @@ export default function OnboardingApprovalPage() {
       </div>
       
       {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
         <Card
           header="Pending Retailers"
           value={summary.pendingRetailers}
@@ -499,7 +501,7 @@ export default function OnboardingApprovalPage() {
                     Submitted
                   </label>
                   <p className="text-[var(--text-color)]">
-                    {fmtDateIN(reviewingRetailer.createdAt)}
+                    {reviewingRetailer.submittedAt || fmtDateIN(reviewingRetailer.createdAt)}
                   </p>
                 </div>
                 <div>
@@ -819,7 +821,7 @@ export default function OnboardingApprovalPage() {
                     Submitted
                   </label>
                   <p className="text-[var(--text-color)]">
-                    {fmtDateIN(reviewingCustomer.createdAt)}
+                    {reviewingCustomer.submittedAt || fmtDateIN(reviewingCustomer.createdAt)}
                   </p>
                 </div>
                 <div>
