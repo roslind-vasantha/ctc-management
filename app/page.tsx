@@ -11,6 +11,71 @@ import { useStore } from '@/lib/store';
 import { fmtCurrency, fmtDate, fmtNumber } from '@/lib/format';
 import type { ColumnDef } from '@/lib/types';
 import { Users, Building2, CreditCard, TrendingUp } from 'lucide-react';
+import { cn } from '@/lib/utils';
+
+type KPICardProps = {
+  label: string;
+  value: string;
+  subtext: string;
+  icon: React.ReactNode;
+  variant?: 'default' | 'primary';
+};
+
+function KPICard({ label, value, subtext, icon, variant = 'default' }: KPICardProps) {
+  return (
+    <div
+      className={cn(
+        'relative rounded-2xl p-6 transition-all duration-200 hover:scale-[1.02]',
+        variant === 'primary'
+          ? 'bg-[var(--primary)] text-white shadow-lg'
+          : 'bg-white border border-gray-200 text-gray-900'
+      )}
+    >
+      <div className="flex items-start gap-4">
+        <div
+          className={cn(
+            'rounded-lg p-3',
+            variant === 'primary'
+              ? 'bg-white/20'
+              : 'bg-blue-50'
+          )}
+        >
+          <div className={variant === 'primary' ? 'text-white' : 'text-[var(--primary)]'}>
+            {icon}
+          </div>
+        </div>
+
+        <div className="flex-1">
+          <p
+            className={cn(
+              'text-sm font-medium mb-1',
+              variant === 'primary' ? 'text-white/80' : 'text-gray-500'
+            )}
+          >
+            {label}
+          </p>
+          <div className="h-1 w-12 bg-current opacity-20 rounded mb-3" />
+          <p
+            className={cn(
+              'text-2xl font-bold mb-1',
+              variant === 'primary' ? 'text-white' : 'text-gray-900'
+            )}
+          >
+            {value}
+          </p>
+          <p
+            className={cn(
+              'text-sm',
+              variant === 'primary' ? 'text-white/70' : 'text-gray-500'
+            )}
+          >
+            {subtext}
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default function DashboardPage() {
   const { distributors, retailers, customers, transactions } = useStore();
@@ -38,19 +103,45 @@ export default function DashboardPage() {
     };
   }, [distributors, retailers, customers, transactions]);
   
-  // Top 3 distributors by commission
-  const top3Distributors = useMemo(() => {
-    const distCommissions = distributors.map((dist) => {
-      const distTxns = transactions.filter((t) => t.distributorId === dist.id);
-      const totalCommission = distTxns.reduce((sum, t) => sum + t.commissionToMgmt, 0);
-      return { name: dist.name, value: totalCommission };
-    });
-    
-    return distCommissions
-      .sort((a, b) => b.value - a.value)
-      .slice(0, 3)
-      .map((d) => ({ ...d, name: d.name.slice(0, 25) }));
-  }, [distributors, transactions]);
+  // Overall Business Performance Metrics
+  const businessMetrics = useMemo(() => {
+    // Only count successful transactions
+    const successfulTxns = transactions.filter((t) => t.status === 'success');
+
+    // Total Transaction Volume
+    const totalVolume = successfulTxns.length;
+
+    // GMV by Card Network
+    const gmvByNetwork = successfulTxns.reduce((acc, t) => {
+      const network = t.cardBrand || 'UNKNOWN';
+      if (!acc[network]) {
+        acc[network] = { gmv: 0, count: 0 };
+      }
+      acc[network].gmv += t.amount;
+      acc[network].count += 1;
+      return acc;
+    }, {} as Record<string, { gmv: number; count: number }>);
+
+    // Convert to array for chart
+    const networkData = Object.entries(gmvByNetwork).map(([name, data]) => ({
+      name,
+      value: data.gmv,
+      count: data.count,
+    }));
+
+    // Net Revenue (commissionToMgmt is the revenue for management)
+    const netRevenue = successfulTxns.reduce((sum, t) => sum + t.commissionToMgmt, 0);
+
+    // Yield Average (average margin per transaction)
+    const yieldAverage = totalVolume > 0 ? netRevenue / totalVolume : 0;
+
+    return {
+      totalVolume,
+      networkData,
+      netRevenue,
+      yieldAverage,
+    };
+  }, [transactions]);
   
   // Recent transactions
   const recentTransactions = useMemo(() => {
@@ -74,70 +165,29 @@ export default function DashboardPage() {
     const now = new Date();
     const days = dateRange;
     const data: Array<{ date: string; gmv: number; commission: number }> = [];
-    
+
     for (let i = days - 1; i >= 0; i--) {
       const date = new Date(now);
       date.setDate(date.getDate() - i);
       const dateStr = date.toISOString().split('T')[0];
-      
+
       const dayTxns = transactions.filter((t) => {
         const txDate = new Date(t.createdAt).toISOString().split('T')[0];
         return txDate === dateStr;
       });
-      
+
       const gmv = dayTxns.reduce((sum, t) => sum + t.amount, 0);
       const commission = dayTxns.reduce((sum, t) => sum + t.commissionToMgmt, 0);
-      
+
       data.push({
         date: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
         gmv,
         commission,
       });
     }
-    
+
     return data;
   }, [transactions, dateRange]);
-  
-  // Suggestions
-  const suggestions = useMemo(() => {
-    const items: string[] = [];
-    
-    // High performer
-    if (top3Distributors.length > 0) {
-      items.push(`${top3Distributors[0].name} is your top distributor with ${fmtCurrency(top3Distributors[0].value)} in management commissions`);
-    }
-    
-    // Pending KYC
-    const pendingKyc = [...distributors, ...retailers, ...customers].filter(
-      (e) => e.kycStatus === 'pending'
-    );
-    if (pendingKyc.length > 0) {
-      items.push(`${pendingKyc.length} entities have pending KYC verification`);
-    }
-    
-    // Growth rate
-    const last30Days = transactions.filter(
-      (t) => new Date(t.createdAt) >= new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
-    );
-    const prev30Days = transactions.filter((t) => {
-      const date = new Date(t.createdAt);
-      return (
-        date >= new Date(Date.now() - 60 * 24 * 60 * 60 * 1000) &&
-        date < new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
-      );
-    });
-    
-    if (prev30Days.length > 0) {
-      const growth = ((last30Days.length - prev30Days.length) / prev30Days.length) * 100;
-      if (Math.abs(growth) > 5) {
-        items.push(
-          `Transaction volume ${growth > 0 ? 'increased' : 'decreased'} by ${Math.abs(growth).toFixed(1)}% compared to previous 30 days`
-        );
-      }
-    }
-    
-    return items;
-  }, [distributors, retailers, customers, transactions, top3Distributors]);
   
   const columns: ColumnDef<typeof recentTransactions[0]>[] = [
     { key: 'id', label: 'Transaction ID', sortable: true },
@@ -189,48 +239,82 @@ export default function DashboardPage() {
       
       {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <Card
-          header="Total Distributors"
+        <KPICard
+          label="Total Distributors"
           value={fmtNumber(kpis.totalDistributors)}
           subtext="Active distributors in network"
-          icon={<Building2 size={20} />}
+          icon={<Building2 size={20} aria-hidden="true" />}
         />
-        <Card
-          header="Total Retailers"
+        <KPICard
+          label="Total Retailers"
           value={fmtNumber(kpis.totalRetailers)}
           subtext="Active retailers in network"
-          icon={<Users size={20} />}
+          icon={<Users size={20} aria-hidden="true" />}
         />
-        <Card
-          header="Total Customers"
+        <KPICard
+          label="Total Customers"
           value={fmtNumber(kpis.totalCustomers)}
           subtext="Registered customers"
-          icon={<Users size={20} />}
+          icon={<Users size={20} aria-hidden="true" />}
         />
-        <Card
-          header="MTD GMV"
+        <KPICard
+          label="MTD GMV"
           value={fmtCurrency(kpis.mtdGmv)}
           subtext="Month-to-date gross merchandise value"
-          icon={<TrendingUp size={20} />}
+          icon={<TrendingUp size={20} aria-hidden="true" />}
         />
-        <Card
-          header="MTD Transactions"
+        <KPICard
+          label="MTD Transactions"
           value={fmtNumber(kpis.mtdTransactions)}
           subtext="Month-to-date transaction count"
-          icon={<CreditCard size={20} />}
+          icon={<CreditCard size={20} aria-hidden="true" />}
         />
-        <Card
-          header="MTD Commission"
+        <KPICard
+          label="MTD Commission"
           value={fmtCurrency(kpis.mtdCommission)}
           subtext="Month-to-date management commission"
-          icon={<TrendingUp size={20} />}
-          variant="success"
+          icon={<TrendingUp size={20} aria-hidden="true" />}
+          variant="primary"
         />
       </div>
       
-      {/* Top 3 Distributors */}
-      <Card header="Top 3 Distributors by Commission">
-        <BarMini data={top3Distributors} height={180} />
+      {/* Overall Business Performance */}
+      <div>
+        <h2 className="text-xl font-semibold text-[var(--text-color)] mb-4">
+          Overall Business Performance
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <KPICard
+            label="Total Transaction Volume"
+            value={fmtNumber(businessMetrics.totalVolume)}
+            subtext="Successful transactions count"
+            icon={<CreditCard size={20} aria-hidden="true" />}
+          />
+          <KPICard
+            label="Net Revenue"
+            value={fmtCurrency(businessMetrics.netRevenue)}
+            subtext="Total management commission"
+            icon={<TrendingUp size={20} aria-hidden="true" />}
+            variant="primary"
+          />
+          <KPICard
+            label="Yield Average"
+            value={fmtCurrency(businessMetrics.yieldAverage)}
+            subtext="Average margin per transaction"
+            icon={<TrendingUp size={20} aria-hidden="true" />}
+          />
+          <KPICard
+            label="Card Networks"
+            value={fmtNumber(businessMetrics.networkData.length)}
+            subtext="Active payment networks"
+            icon={<CreditCard size={20} aria-hidden="true" />}
+          />
+        </div>
+      </div>
+
+      {/* GMV by Card Network */}
+      <Card header="GMV by Card Network">
+        <BarMini data={businessMetrics.networkData} height={200} />
       </Card>
       
       {/* Time Series */}
@@ -272,23 +356,6 @@ export default function DashboardPage() {
           compact
         />
       </Card>
-      
-      {/* Suggestions */}
-      {suggestions.length > 0 && (
-        <Card header="Insights & Suggestions">
-          <ul className="space-y-3">
-            {suggestions.map((suggestion, idx) => (
-              <li
-                key={idx}
-                className="flex items-start gap-3 text-sm text-[var(--text-color)]"
-              >
-                <span className="text-[var(--foreground)] font-bold">•</span>
-                <span>{suggestion}</span>
-              </li>
-            ))}
-          </ul>
-        </Card>
-      )}
     </div>
   );
 }
