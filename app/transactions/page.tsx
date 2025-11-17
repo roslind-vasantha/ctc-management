@@ -98,19 +98,6 @@ export default function TransactionsPage() {
   };
   
   const columns: ColumnDef<Transaction>[] = [
-    {
-      key: 'select',
-      label: '',
-      render: (row) => (
-        <input
-          type="checkbox"
-          checked={selectedTxns.has(row.id)}
-          onChange={() => toggleSelection(row.id)}
-          onClick={(e) => e.stopPropagation()}
-          className="w-4 h-4 cursor-pointer"
-        />
-      ),
-    },
     { key: 'id', label: 'Transaction ID', sortable: true },
     {
       key: 'createdAt',
