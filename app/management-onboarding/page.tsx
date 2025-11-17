@@ -345,40 +345,51 @@ export default function ManagementOnboardingPage() {
         </div>
 
         {/* Tabs */}
-        <div className="mb-6">
-          <div className="flex gap-1.5 bg-[var(--muted)] rounded-full p-1 max-w-md mx-auto">
-            <button
-              onClick={() => setActiveTab('distributor')}
-              className={`flex-1 py-1.5 px-4 text-sm font-medium transition-all rounded-full ${
-                activeTab === 'distributor'
-                  ? 'bg-white text-[var(--primary)] shadow-sm'
-                  : 'text-[var(--muted-foreground)] hover:text-[var(--text-color)]'
-              }`}
-            >
-              Distributor
-            </button>
-            <button
-              onClick={() => setActiveTab('retailer')}
-              className={`flex-1 py-1.5 px-4 text-sm font-medium transition-all rounded-full ${
-                activeTab === 'retailer'
-                  ? 'bg-white text-[var(--primary)] shadow-sm'
-                  : 'text-[var(--muted-foreground)] hover:text-[var(--text-color)]'
-              }`}
-            >
-              Retailer
-            </button>
-            <button
-              onClick={() => setActiveTab('customer')}
-              className={`flex-1 py-1.5 px-4 text-sm font-medium transition-all rounded-full ${
-                activeTab === 'customer'
-                  ? 'bg-white text-[var(--primary)] shadow-sm'
-                  : 'text-[var(--muted-foreground)] hover:text-[var(--text-color)]'
-              }`}
-            >
-              Customer
-            </button>
-          </div>
-        </div>
+        
+        <div className="mb-6 flex gap-0 p-0 max-w-lg mx-auto rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+      <button
+        onClick={() => setActiveTab('distributor')}
+        className={`flex-1 py-3 px-4 text-sm font-medium transition-all relative ${
+          activeTab === 'distributor'
+            ? 'text-blue-600'
+            : 'text-gray-600 hover:text-gray-900'
+        }`}
+      >
+        Distributor
+        {activeTab === 'distributor' && (
+          <div className="absolute bottom-0 left-0 right-0 h-1 bg-blue-600"></div>
+        )}
+      </button>
+      <div className="border-l border-gray-200"></div>
+      <button
+        onClick={() => setActiveTab('retailer')}
+        className={`flex-1 py-3 px-4 text-sm font-medium transition-all relative ${
+          activeTab === 'retailer'
+            ? 'text-blue-600'
+            : 'text-gray-600 hover:text-gray-900'
+        }`}
+      >
+        Retailer
+        {activeTab === 'retailer' && (
+          <div className="absolute bottom-0 left-0 right-0 h-1 bg-blue-600"></div>
+        )}
+      </button>
+      <div className="border-l border-gray-200"></div>
+      <button
+        onClick={() => setActiveTab('customer')}
+        className={`flex-1 py-3 px-4 text-sm font-medium transition-all relative ${
+          activeTab === 'customer'
+            ? 'text-blue-600'
+            : 'text-gray-600 hover:text-gray-900'
+        }`}
+      >
+        Customer
+        {activeTab === 'customer' && (
+          <div className="absolute bottom-0 left-0 right-0 h-1 bg-blue-600"></div>
+        )}
+      </button>
+    </div>
+
 
         {/* Forms Container */}
         <div className="bg-white rounded-4xl shadow-sm p-8">
