@@ -176,8 +176,8 @@ export const DataTable = <T extends Record<string, any>>({
       </div>
       
       {/* Table */}
-      <div className="overflow-x-hidden border border-[var(--border)] rounded-lg">
-        <table className="w-full table-fixed">
+      <div className="overflow-x-auto border border-[var(--border)] rounded-lg">
+        <table className="w-full table-auto">
           <thead className="bg-[var(--muted)] border-b border-[var(--border)]">
             <tr>
               {columns.map((column) => (
@@ -194,7 +194,7 @@ export const DataTable = <T extends Record<string, any>>({
                   onClick={() => column.sortable && handleSort(column.key as keyof T)}
                 >
                   <div className="flex items-center gap-2 whitespace-nowrap">
-                    <span className="truncate">{column.label}</span>
+                    <span>{column.label}</span>
                     {column.sortable && (
                       <span className="flex flex-col">
                         {sortField === column.key ? (

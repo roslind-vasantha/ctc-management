@@ -98,16 +98,18 @@ export default function TransactionsPage() {
   };
   
   const columns: ColumnDef<Transaction>[] = [
-    { key: 'id', label: 'Transaction ID', sortable: true },
+    { key: 'id', label: 'Transaction ID', sortable: true, width: 150 },
     {
       key: 'createdAt',
       label: 'Date',
       sortable: true,
+      width: 150,
       render: (row) => fmtDate(row.createdAt, 'short'),
     },
     {
       key: 'distributorId',
       label: 'Distributor',
+      width: 180,
       render: (row) => {
         const dist = distributors.find((d) => d.id === row.distributorId);
         return <span className="truncate max-w-[150px] block">{dist?.name || '-'}</span>;
@@ -116,6 +118,7 @@ export default function TransactionsPage() {
     {
       key: 'retailerId',
       label: 'Retailer',
+      width: 180,
       render: (row) => {
         const retailer = retailers.find((r) => r.id === row.retailerId);
         return <span className="truncate max-w-[150px] block">{retailer?.name || '-'}</span>;
@@ -125,22 +128,26 @@ export default function TransactionsPage() {
       key: 'amount',
       label: 'Amount',
       sortable: true,
+      width: 120,
       render: (row) => fmtCurrency(row.amount),
     },
     {
       key: 'commissionToMgmt',
       label: 'Mgmt Commission',
       sortable: true,
+      width: 150,
       render: (row) => fmtCurrency(row.commissionToMgmt),
     },
     {
       key: 'cardBrand',
       label: 'Card',
+      width: 140,
       render: (row) => <Badge variant="info">{row.cardBrand}</Badge>,
     },
     {
       key: 'status',
       label: 'Status',
+      width: 110,
       render: (row) => {
         const variant =
           row.status === 'success'
@@ -156,6 +163,7 @@ export default function TransactionsPage() {
     {
       key: 'actions',
       label: 'Actions',
+      width: 90,
       render: (row) => (
         <Button
           variant="ghost"
@@ -180,33 +188,6 @@ export default function TransactionsPage() {
             Monitor and manage all card-to-cash transactions
           </p>
         </div>
-      
-      {/* KPI Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card
-          header="Total GMV"
-          value={fmtCurrency(kpis.totalGmv)}
-          subtext={`${filteredTransactions.length} transactions`}
-        />
-        <Card
-          header="Total Fees"
-          value={fmtCurrency(kpis.totalFees)}
-          subtext="Collected from customers"
-          variant="info"
-        />
-        <Card
-          header="Mgmt Commission"
-          value={fmtCurrency(kpis.mgmtCommission)}
-          subtext="Net revenue"
-          variant="success"
-        />
-        <Card
-          header="Success Rate"
-          value={`${kpis.successRate.toFixed(1)}%`}
-          subtext="Transaction success rate"
-          variant={kpis.successRate >= 90 ? 'success' : 'warning'}
-        />
-      </div>
       
       {/* Filters */}
       <Card>
@@ -306,12 +287,14 @@ export default function TransactionsPage() {
       
       {/* Transactions Table */}
       <Card>
-        <DataTable
-          columns={columns}
-          rows={filteredTransactions}
-          searchKeys={['id']}
-          defaultPageSize={25}
-        />
+        <div className="w-full overflow-x-auto">
+          <DataTable
+            columns={columns}
+            rows={filteredTransactions}
+            searchKeys={['id']}
+            defaultPageSize={25}
+          />
+        </div>
       </Card>
       
       {/* Transaction Detail Modal */}
