@@ -27,7 +27,7 @@ export const navSections: NavSection[] = [
   {
     title: 'Risk & Compliance',
     items: [
-      { label: 'Risk Dashboard', href: '/risk/dashboard', icon: BarChart3 },
+      // { label: 'Risk Dashboard', href: '/risk/dashboard', icon: BarChart3 },
       { label: 'Disputes', href: '/disputes', icon: AlertTriangle },
     ],
   },
