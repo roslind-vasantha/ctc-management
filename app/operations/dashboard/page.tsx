@@ -39,8 +39,8 @@ export default function OperationsDashboardPage() {
 
   const submittedAwaitingApproval = useMemo(() => {
     return (
-      count(retailers, (r) => r.onboardingState === 'submitted' && r.kycStatus === 'pending') +
-      count(customers, (c) => c.onboardingState === 'submitted' && c.kycStatus === 'pending')
+      count(retailers, (r) => r.onboardingState === 'submitted') +
+      count(customers, (c) => c.onboardingState === 'submitted')
     );
   }, []);
 
@@ -139,7 +139,7 @@ export default function OperationsDashboardPage() {
   // Queue Snapshots
   const retailersAwaitingApproval = useMemo<RetailerRow[]>(() => {
     return retailers
-      .filter((r) => r.onboardingState === 'submitted' && r.kycStatus === 'pending')
+      .filter((r) => r.onboardingState === 'submitted')
       .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
       .slice(0, 8)
       .map((r) => {
@@ -154,7 +154,7 @@ export default function OperationsDashboardPage() {
 
   const customersAwaitingApproval = useMemo<CustomerRow[]>(() => {
     return customers
-      .filter((c) => c.onboardingState === 'submitted' && c.kycStatus === 'pending')
+      .filter((c) => c.onboardingState === 'submitted')
       .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
       .slice(0, 8)
       .map((c) => {

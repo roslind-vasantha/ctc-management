@@ -80,7 +80,7 @@ export default function OnboardingApprovalPage() {
   );
   
   const submittedRetailers = useMemo(
-    () => retailers.filter((r) => r.onboardingState === 'submitted' && r.kycStatus === 'pending'),
+    () => retailers.filter((r) => r.onboardingState === 'submitted'),
     [retailers]
   );
   
@@ -90,7 +90,7 @@ export default function OnboardingApprovalPage() {
   );
   
   const submittedCustomers = useMemo(
-    () => customers.filter((c) => c.onboardingState === 'submitted' && c.kycStatus === 'pending'),
+    () => customers.filter((c) => c.onboardingState === 'submitted'),
     [customers]
   );
   
