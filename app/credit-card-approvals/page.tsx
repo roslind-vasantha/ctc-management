@@ -106,7 +106,7 @@ export default function CreditCardApprovalsPage() {
       label: "Actions",
       render: (row) => (
         <Button
-          variant="ghost"
+          variant="primary"
           size="sm"
           onClick={(e) => {
             e.stopPropagation();
