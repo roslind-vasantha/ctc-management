@@ -1,226 +1,473 @@
-# Card-to-Cash Management Platform
+---
+# **Business Requirements Document (BRD)
 
-A comprehensive UI-only demo for managing a Card-to-Cash financial services platform built with Next.js, TypeScript, and TailwindCSS.
+Management Application – Card-to-Cash Platform**
+---
 
-## Features
+## **1. Purpose**
 
-### 🎯 Core Pages
+The Management Application enables administrators to oversee the entire Card-to-Cash ecosystem: onboarding, approvals, transactions, commissions, risk, finance, disputes, and user profiles. It acts as the central control system for operational, financial, and compliance oversight.
 
-1. **Dashboard** - KPIs, top distributors, time-series charts, and insights
-2. **Management Onboarding** - Create and manage distributors
-3. **Onboarding Approval** - Review and approve retailer/customer applications
-4. **Profile Management** - 3-level hierarchical view (Distributors → Retailers → Customers)
-5. **Commission Management** - Create commission rules with tier system and simulator
-6. **Transactions** - Comprehensive transaction management with filters and bulk actions
-7. **Disputes** - Manage transaction disputes with timeline and resolution workflows
-8. **Credit Card Approvals** - Review credit limit requests with risk assessment
-9. **Settings** - User profile and application preferences
+---
 
-### 🎨 UI Components
+## **2. In-Scope Modules**
 
-- **Layout**: Responsive TopBar and collapsible SideNav
-- **Data Display**: DataTable with search, sort, filter, pagination, and CSV export
-- **Charts**: AreaSpark, BarMini, and LineSeries using Recharts
-- **Forms**: Input, Select, Button, Modal, Tabs
-- **Feedback**: Toast notifications, Badge, Card components
+1. **Executive Dashboard**
+2. **Finance Dashboard**
+3. **Risk & Control Dashboard**
+4. **Operations Dashboard**
+5. **Management Onboarding**
+6. **Onboarding Approvals (Retailers + Customers)**
+7. **Profile Management**
+8. **Commission Management**
+9. **Transaction Report & Transaction Management**
+10. **Disputes Management**
+11. **Credit Card Approvals**
+12. **Settings**
 
-### 📊 Data & State
+---
 
-- **Deterministic seed data**: 8 distributors, 24 retailers, 120 customers, 600 transactions
-- **In-memory state management**: All changes stored locally
-- **LocalStorage integration**: Preferences and user data persist across sessions
-- **Relational integrity**: All IDs properly linked across entities
+## **3. Out of Scope**
 
-## Tech Stack
+- Actual money movement
+- Real KYC verification
+- Card validation against banks/networks
+- Production payment gateway logic
+- Backend flows
+- Automated decision-making (manual review only)
+- Customer-facing applications (Retailer/Distributor/Customer dashboards)
 
-- **Framework**: Next.js 16 (App Router)
-- **Language**: TypeScript
-- **Styling**: TailwindCSS with CSS variables
-- **Icons**: lucide-react
-- **Charts**: Recharts
-- **State**: React hooks + LocalStorage
+---
 
-## Installation
+# **4. Screen-by-Screen Business Requirements**
 
-1. **Install dependencies**:
-   ```bash
-   npm install
-   ```
+---
 
-2. **Run development server**:
-   ```bash
-   npm run dev
-   ```
+# **4.1 Executive Dashboard**
 
-3. **Open in browser**:
-   Navigate to [http://localhost:3000](http://localhost:3000)
+### **Goal**
 
-## Project Structure
+Provide high-level overview of business performance, revenue, transactions, GMV, success rate, disputes, and risk indicators.
 
-```
-app/
-├── components/
-│   ├── layout/
-│   │   ├── TopBar.tsx          # Header with branding and actions
-│   │   └── SideNav.tsx         # Responsive navigation sidebar
-│   ├── ui/
-│   │   ├── Card.tsx            # Stat card with variants
-│   │   ├── Badge.tsx           # Status badge component
-│   │   ├── Button.tsx          # Button with icon support
-│   │   ├── Input.tsx           # Labeled input with validation
-│   │   ├── Select.tsx          # Dropdown select component
-│   │   ├── Tabs.tsx            # Accessible tab component
-│   │   ├── Modal.tsx           # Modal with focus trap
-│   │   ├── Toast.tsx           # Toast notification system
-│   │   └── DataTable.tsx       # Full-featured data table
-│   └── charts/
-│       ├── AreaSpark.tsx       # Sparkline with trend indicator
-│       ├── BarMini.tsx         # Horizontal bar chart
-│       └── LineSeries.tsx      # Time-series line chart
-├── page.tsx                    # Dashboard
-├── management-onboarding/page.tsx
-├── onboarding-approval/page.tsx
-├── profile-management/page.tsx
-├── commission-management/page.tsx
-├── transactions/page.tsx
-├── disputes/page.tsx
-├── credit-card-approvals/page.tsx
-├── settings/page.tsx
-├── layout.tsx                  # Root layout with providers
-└── globals.css                 # CSS variables and theme
+### **Components**
 
-lib/
-├── types.ts                    # TypeScript type definitions
-├── data.ts                     # Seed data with relational integrity
-├── format.ts                   # Currency, date, number formatters
-├── filters.ts                  # Filter and sort utilities
-├── pagination.ts               # Pagination helpers
-└── store.ts                    # In-memory state management
-```
+- KPI Cards: GMV, Total Transactions, Net Revenue, Management Commission, Dispute Rate, Success Rate, Chargeback-prone Users
+- Date Range Filters
+- GMV Trend
+- Transactions Trend
+- GMV by Card Network
+- Net Revenue vs Commission
+- Disputes Trend
+- Top Contributors Table
+- Alerts Summary
 
-## CSS Variables
+### **Acceptance Criteria**
 
-The application uses CSS variables for theming with automatic dark mode support:
+- All KPIs update based on filters
+- Charts update smoothly
+- Data is dummy but realistic
+- No PII beyond allowed masked fields
 
-- `--background`, `--foreground`: Main colors
-- `--text-color`, `--muted`, `--muted-foreground`: Text colors
-- `--card-bg`, `--input-bg`, `--border`: Component backgrounds
-- `--success-bg/text/border`: Success states
-- `--warning-bg/text/border`: Warning states
-- `--danger-bg/text/border`: Error/danger states
-- `--info-bg/text/border`: Info states
+---
 
-## Key Features
+# **4.2 Finance Dashboard**
 
-### DataTable Component
-- **Search**: Text search across multiple fields
-- **Sort**: Click column headers to sort
-- **Filter**: Faceted filters (status, region, brand, etc.)
-- **Pagination**: Adjustable page size with navigation
-- **CSV Export**: Download current view as CSV
+### **Goal**
 
-### Charts
-- **AreaSpark**: Inline sparkline with trend percentage
-- **BarMini**: Horizontal bars for top contributors
-- **LineSeries**: Time-series with toggleable date ranges (30/90 days)
-- All charts use CSS variables for theming
+Monitor revenue, GMV, margins, commissions, profitability, and revenue contribution by partners.
 
-### Filters & Search
-- **Date Range**: Start/end date pickers
-- **Entity Filters**: Filter by distributor, retailer, customer
-- **Status Filters**: Filter by transaction/dispute/approval status
-- **Card Brand**: Filter by VISA, MASTERCARD, AMEX, RUPAY
-- **URL Params**: Filters sync with URL for shareable links
+### **Key Features**
 
-### State Management
-- **useStore**: Central hook for all data with update methods
-- **usePreferences**: User preferences in localStorage
-- **useManagementUser**: Current user profile in localStorage
-- All mutations update in-memory state and trigger re-renders
+- KPI Cards
 
-## Data Model
+  - Gross Merchandise Value
+  - Total Transactions
+  - Net Revenue
+  - Management Commission
+  - Yield
 
-### Entities
-- **Distributor**: Regional partners with commission rules
-- **Retailer**: Linked to distributors, serve customers
-- **Customer**: End users with card information
-- **Transaction**: Card-to-cash conversion records
-- **Dispute**: Transaction dispute records
-- **CreditCardApproval**: Credit limit requests
-- **CommissionRule**: Tiered commission structures
+- GMV Trend
+- Net Revenue Trend
+- GMV by Card Network (X = GMV, Y = Network)
+- Net Revenue vs Commission
+- Top Contributors Table
 
-### Relationships
-```
-Distributor (1) → (*) Retailer (1) → (*) Customer (1) → (*) Transaction
-                                                         └→ (*) Dispute
-CommissionRule → Distributor (optional specific assignment)
-CreditCardApproval → Customer
-```
+  - Must show **Net Revenue before Management Commission**
+  - Management Commission must always be **slightly less** than Net Revenue
 
-## Accessibility
+### **Acceptance Criteria**
 
-- Keyboard navigation throughout
-- ARIA labels and roles
-- Focus management in modals
-- Proper heading hierarchy
-- Color contrast ratios meet WCAG AA
+- Revenue numbers realistic (yield 0.5%–3%)
+- Management commission 70–90% of Net Revenue
+- GMV scaling must reflect proper revenue logic
 
-## Browser Support
+---
 
-- Modern evergreen browsers (Chrome, Firefox, Safari, Edge)
-- No Internet Explorer support
-- Responsive design: Mobile (< 768px), Tablet (768-1024px), Desktop (> 1024px)
+# **4.3 Risk & Control Dashboard**
 
-## Development
+### **Goal**
 
-### Adding a New Page
+Enable risk teams to monitor fraud signals, suspicious activity, disputes, risky users, and alert patterns.
 
-1. Create page file: `app/my-page/page.tsx`
-2. Add route to `SideNav.tsx`
-3. Use existing components and hooks
-4. Follow established patterns for filters and state
+### **Components**
 
-### Adding a New Component
+- KPI Cards:
 
-1. Create component in `app/components/ui/`
-2. Use TypeScript for props
-3. Apply CSS variables for theming
-4. Export from component file
+  - Overall Risk Score
+  - High-Risk Transactions
+  - Dispute Rate
+  - Chargeback Ratio
 
-### Modifying Data
+- Risk Trend Chart
+- High-Risk by Reason Chart
+- Risk Alerts Panel
+- High-Risk Customers Table
+- High-Risk Partners Table
+- Optional: KYC Issues, Rule Trigger Summary
 
-Edit `lib/data.ts` to adjust seed data. Maintain relational integrity by ensuring all IDs reference valid entities.
+### **Acceptance Criteria**
 
-## Limitations
+- All alerts show severity + timestamp
+- High-risk entities sorted by risk score
+- Risk score must be deterministic from dummy logic
 
-- **No Backend**: All data is client-side only
-- **No Persistence**: Data resets on page refresh (except localStorage preferences)
-- **No Authentication**: Single demo user
-- **No Real API Calls**: All operations are local state mutations
+---
 
-## Production Checklist
+# **4.4 Operations Dashboard**
 
-If adapting for production:
+### **Goal**
 
-- [ ] Add authentication/authorization
-- [ ] Integrate real API endpoints
-- [ ] Add data persistence (database)
-- [ ] Implement server-side validation
-- [ ] Add error boundaries
-- [ ] Set up monitoring and logging
-- [ ] Add comprehensive testing
-- [ ] Implement proper security measures
-- [ ] Add rate limiting and protection
-- [ ] Set up CI/CD pipeline
+Monitor onboarding throughput, pending approvals, bottlenecks, and operational workload.
 
-## License
+### **Core KPIs**
 
-This is a demo project. Adapt as needed for your use case.
+- Pending Retailers
+- Pending Customers
+- Total Approved Retailers
+- Total Approved Customers
+- Onboarding Funnel Completion Rate
+- Average Approval Time
 
-## Credits
+### **Charts**
 
-Built with:
-- [Next.js](https://nextjs.org/)
-- [TailwindCSS](https://tailwindcss.com/)
-- [Recharts](https://recharts.org/)
-- [Lucide Icons](https://lucide.dev/)
+- Retailer Onboarding Trend
+- Customer Onboarding Trend
+- Overall Funnel Drop-off Chart
+
+### **Removed Components**
+
+- Retailers Awaiting Approval Table
+- Customers Awaiting Approval Table
+- Card Approvals Queue Table
+
+### **Acceptance Criteria**
+
+- All charts reflect dummy onboarding flows
+- No leftover empty grid space after table removal
+
+---
+
+# **4.5 Management Onboarding**
+
+### **Goal**
+
+Enable management to onboard distributors.
+
+### **Fields Collected**
+
+- Name
+- Phone
+- Email
+- Aadhaar (masked)
+- PAN (masked)
+- Company Name
+- City
+- Address
+- Documents (dummy placeholders)
+
+### **Actions**
+
+- View Profile
+- Approve
+- Reject
+- Suspend
+- Edit Details
+- Search + Clear
+- Pagination
+- Cursor pointer on all actionable items
+
+### **Acceptance Criteria**
+
+- No checkbox column
+- Actions must visibly highlight (pointer cursor)
+- Consistent blue action buttons
+
+---
+
+# **4.6 Onboarding Approvals**
+
+### **Goal**
+
+Approve or reject onboarded retailers and customers.
+
+### **Tabs**
+
+- Retailers
+
+  - Pending
+  - Submitted
+
+- Customers
+
+  - Pending
+  - Submitted
+
+### **Data Rules**
+
+- Pending = started onboarding but not completed
+- Submitted = completed onboarding
+- KYC Status for submitted = **Verified**
+- Retailers Submitted must have dummy Indian data
+- Customers Pending + Submitted must have dummy Indian data
+
+### **Cards (always 4 in one row)**
+
+- Pending Retailers
+- Retailers Awaiting Approval
+- Pending Customers
+- Customers Awaiting Approval
+
+### **Actions**
+
+- View (Blue button)
+- Review (Blue button)
+- Cursor pointer on all tabs and action buttons
+
+### **Acceptance Criteria**
+
+- Table correctly shows new data
+- View/Review always blue with border
+- KYC Verified in submitted state
+
+---
+
+# **4.7 Profile Management**
+
+### **Goal**
+
+View and manage distributor, retailer, and customer profiles.
+
+### **Features**
+
+- Profile Table (no checkboxes)
+- Distributor → Retailers → Customers hierarchy
+- KYC status
+- Filters: distributor, retailer, city
+- Search by name/phone/email
+- View details modal
+
+### **Acceptance Criteria**
+
+- Clean hierarchical listing
+- Column alignment correct after checkbox removal
+
+---
+
+# **4.8 Commission Management**
+
+### **Goal**
+
+Set and manage commission rules for distributors and retailers.
+
+### **Types of Commissions**
+
+- Per Transaction
+- Volume-Based (tiered)
+- Distributor override
+- Retailer override
+- Minimum and maximum caps
+
+### **Actions**
+
+- Add Rule
+- Edit Rule
+- Disable Rule
+- Review Applied Rule
+- Preview commission applied on sample transaction
+
+### **Acceptance Criteria**
+
+- Dummy rules must match realistic fintech ranges
+- Tier logic deterministic and error-free
+
+---
+
+# **4.9 Transactions Report & Management**
+
+### **Goal**
+
+View, filter, export, and analyze transactions.
+
+### **Features**
+
+- Date Range
+- Card Network Filter
+- Transaction Status Filter
+- Search (transaction ID, phone, name)
+- CSV Export
+- Horizontal scroll (x-scroll) if needed
+- Column width adjustments so titles are fully visible
+- Table without top summary cards
+- No checkbox column
+
+### **Actions**
+
+- View Transaction
+- Download (dummy) receipt
+
+### **Acceptance Criteria**
+
+- All columns readable
+- Scroll appears only when needed
+- Filters + table have no gap between them
+
+---
+
+# **4.10 Disputes Management**
+
+### **Goal**
+
+Handle disputes raised by customers.
+
+### **Statuses**
+
+- Pending
+- Processing
+- Resolved
+- Rejected
+
+### **Components**
+
+- KPI Cards (Pending = Blue background)
+- Disputes Table
+- Filters
+- Search + Clear
+- View Modal
+
+  - Actions: Process, Resolve, Reject
+  - **Do NOT show Resolve if dispute is rejected**
+  - Cursor pointer on all actions and close button
+
+### **Table Rules**
+
+- Customer column width: 180px
+- Action column width: 100px
+- Remove phone & email from customer column
+- Last Updated = DD/MM/YYYY only (no time)
+- No x-scroll (adjust spacing to avoid overflow)
+- View button left-aligned + blue button + eye icon
+
+### **Acceptance Criteria**
+
+- Table clean and readable
+- All status filters functional
+- Correct conditional visibility of Resolve button
+
+---
+
+# **4.11 Credit Card Approvals**
+
+### **Goal**
+
+Validate customer credit cards and approve/reject them.
+
+### **Features**
+
+- Card list
+- Customer info
+- Submitted timestamp (Indian format)
+- View → Approve / Reject
+- Moves from awaiting approval → approved list
+
+### **Acceptance Criteria**
+
+- Only customers have these approvals
+- Retailers/Distributors do not have card approvals
+
+---
+
+# **4.12 Settings**
+
+### **Goal**
+
+Allow management to update their own profile and preferences.
+
+### **Sections**
+
+- Personal Info
+- Contact Info
+- Role
+- Permissions (read-only for demo)
+- Change Password
+- Application Preferences
+
+### **Acceptance Criteria**
+
+- Settings save state locally in demo mode
+- No backend calls
+
+---
+
+# **5. Non-Functional Requirements**
+
+### **5.1 Performance**
+
+- Page load < 2 seconds
+- Filters update KPIs/charts < 300ms
+
+### **5.2 Security**
+
+- Only admin roles can access the Management app
+- No unmasked Aadhaar/PAN
+- No real card numbers stored
+
+### **5.3 Design Consistency**
+
+- Blue button variant for all actions
+- Same spacing across all modules
+- Consistent card layout across dashboards
+
+### **5.4 Accessibility**
+
+- All clickable elements must show a cursor pointer
+- Text must be readable on both light mode and dark mode
+
+### **5.5 Data**
+
+- Dummy Indian region data used everywhere
+- Dates in **DD/MM/YYYY**
+
+---
+
+# **6. Acceptance for Entire Management Application**
+
+- Each module behaves according to the BRD
+- All dummy data realistic and region-correct
+- UI stays consistent across screens
+- No broken layouts, no missing spacing
+- Navigation correct, with side menu sections:
+
+  - Executive Dashboard
+  - Finance
+  - Risk & Control
+  - Operations
+  - Management Onboarding
+  - Onboarding Approvals
+  - Profile Management
+  - Commissions
+  - Transactions
+  - Disputes
+  - Card Approvals
+  - Settings
+
+---
