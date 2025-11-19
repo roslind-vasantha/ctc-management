@@ -1,22 +1,7 @@
-This BRD reflects:
-
-- Real Indian regulatory environment (RBI rules, KYC, AML, MDR, PG norms)
-- Real settlement flows (T+1/T+2)
-- Real risk controls
-- Real operational constraints
-- Real revenue & commission models
-- Production-quality acceptance criteria
-- No dummy-app assumptions
-- No shortcuts
-
-It is formatted in **clean Markdown**, ready for GitHub/Notion, and convertible to PDF or DOCX.
-
 ---
-
 # **Business Requirements Document (BRD)**
 
 ## **Management Application – Card-to-Cash Platform (Production Version)**
-
 ---
 
 # **1. Purpose**
@@ -81,7 +66,7 @@ We only have admin in our appplication
 11. Disputes Management
 12. Credit Card Approvals
 13. Settings & Access Control
-15. System Alerts & Notifications
+14. System Alerts & Notifications
 
 ---
 
@@ -113,21 +98,14 @@ Provide top-level visibility into platform health, revenue, profitability, risk 
 - GMV Trend
 - Transaction Volume Trend
 - Revenue Trend
-- Risk Score Trend
 - Disputes Open vs Closed
 - Settlement Status Trend
 
-### **Compliance Metrics**
-
-- KYC completion %
-- PAN/Aadhaar match failures
-
 ### **Acceptance Criteria**
 
-- Dashboard loads under 2 seconds
 - All metrics accurate to backend calculations
 - Timezone: IST
-- Filters: 24h, 7d, 30d, 90d, Custom
+- Filters: 24h, 7d, 30d, Custom
 
 ---
 
@@ -142,15 +120,13 @@ Enable finance team to track revenue, profitability, commissions, settlements, a
 - Total GMV
 - Total Settled Amount
 - Net Revenue
-- Total MDR Fees
-- Total Payout Cost
 - Pending Settlements
 - Yield %
 - Partner-specific earnings
 
 ### **Production Rules**
 
-- Net Revenue = GMV – (MDR + PG fees + settlement fees + partner commissions + tax components)
+- Net Revenue = GMV – (PG fees + distributor commission + retailer commissions + tax components)
 - Commission must always be <= Net Revenue
 - GMV must map to actual daily settlement batches
 
@@ -173,25 +149,16 @@ Enable finance team to track revenue, profitability, commissions, settlements, a
 
 ### **Purpose**
 
-Monitor fraud, anomalies, sanction violations, misuse, and high-risk flows.
+Monitor disputes and chargeback
 
 ### **KPIs**
 
 - Chargeback ratio
 - Dispute rate
 
-
 ### **Charts**
 
-- Risk Trend (aggregated risk score)
-- Rule Trigger Frequency
 - Disputes Open vs Resolved
-- High-Risk by Reason
-
-### **Acceptance Criteria**
-
-- All risk rules configurable
-- Alerts delivered to Risk Team instantly
 
 ---
 
@@ -205,20 +172,7 @@ Monitor onboarding funnel, workload, SLA adherence, and partner performance.
 
 - Pending Retailers
 - Pending Customers
-- Approval turnaround time
 - KYC completion rate
-- Document rejection causes
-- Operational SLA breaches
-
-### **Funnel Visualization**
-
-- Start → Document Upload → Verification → Approval
-
-### **Acceptance Criteria**
-
-- Accurate SLA timers
-- Realistic dropped-off counts
-- Filterable by state/city
 
 ---
 
@@ -230,6 +184,9 @@ Allow management to onboard distributors with full compliance requirements.
 
 ### **Required Fields**
 
+- Name
+- Email
+- Phone
 - PAN + Aadhaar (mandatory validation)
 - GST (if applicable)
 - Bank Account (Penny Drop Verification)
@@ -276,8 +233,6 @@ Allow management to onboard distributors with full compliance requirements.
 ### **Acceptance Criteria**
 
 - Review screen must show submitted KYC results
-- Blue action buttons with border
-- Full audit logging of all actions
 
 ---
 
@@ -290,18 +245,15 @@ Hierarchy visibility: Distributor → Retailer → Customer
 ### **Elements**
 
 - KYC Status
-- Activity timeline
 - Total GMV
 - Success rate
 - Dispute history
-- Fraud risk score
 - Mapped hierarchy
 
 ### **Acceptance Criteria**
 
 - No PII beyond masked values
 - All subordinate relationships accurate
-- All actions logged
 
 ---
 
@@ -346,10 +298,14 @@ Provide full visibility into end-to-end transaction lifecycle.
 - Fees breakdown
 - Source device/IP (optional)
 
+### **Filters**
+
+- Cash-in and cash-out
+- Date filter
+- Search by CRN
+
 ### **Acceptance Criteria**
 
-- No missing columns
-- Column widths always readable
 - Sorting + filtering real-time
 - Export CSV for finance team
 
@@ -366,16 +322,13 @@ Track settlement cycles.
 - Batch ID
 - Date
 - Total Amount
-- PG/MDR fees
 - Payouts
-- Discrepancy handling
-- T+1/T+2 status
+- Status
 - Bank reference number
 
 ### **Acceptance Criteria**
 
 - All settlement numbers match ledger
-- Reconciliation section must exist
 
 ---
 
@@ -397,31 +350,9 @@ Track settlement cycles.
 - Actions (Process/Resolve/Reject)
 - Chargeback flag
 
-### **Production Logic**
-
-- Auto-assign to analyst
-- SLA timer
-- Chargeback sync with card network (when integrated)
-
 ### **Acceptance Criteria**
 
 - Resolve action hidden if dispute already rejected
-- Audit log mandatory
-
----
-
-# **5.12 Credit Card Approvals**
-
-### **Production Rules**
-
-- Validate card scheme rules
-- Validate BIN blocks
-- Validate customer-does-not-own-multiple-high-risk-cards
-
-### **Acceptance Criteria**
-
-- Indian card format validations
-- Submission date in Indian format
 
 ---
 
@@ -431,36 +362,14 @@ Track settlement cycles.
 
 - Profile settings
 - Password update
-- MFA toggle
-- Access logs
 - Notification preferences
 
-### **RBAC**
-
-- Strict permission mapping for every route/screen/action
-
 ---
 
-# **5.14 Audit Logs**
-
-### **Capture**
-
-- Actions
-- Actor
-- Timestamp
-- Payload delta
-- IP / Device
-- Module
-
-### **Must be immutable.**
-
----
-
-# **5.15 Alerts & Notifications**
+<!-- # **5.15 Alerts & Notifications**
 
 ### **Triggers**
 
-- High-risk transactions
 - Fraud rules
 - KYC failures
 - Operational delays
@@ -470,62 +379,17 @@ Track settlement cycles.
 
 - In-app
 - Email
-- (Future) Webhooks
-
----
-
-# **6. Non-Functional Requirements (NFRs)**
-
-### **6.1 Performance**
-
-- Dashboard < 2 seconds load
-- API responses < 300 ms
-- Table pagination < 200 ms
-
-### **6.2 Security**
-
-- PCI DSS compliant
-- Aadhaar masked
-- PAN masked
-- Full encryption at rest
-- JWT + MFA support
-
-### **6.3 Scalability**
-
-- Support 1–5M transactions/day
-- Horizontal scale for dashboards
-- Caching for metrics
-
-### **6.4 Accuracy**
-
-- All financial numbers match ledger
-- IST timezone everywhere
-- No floating-point errors (use integer paise)
-
-### **6.5 Reliability**
-
-- 99.9% uptime
-- Graceful fallback if risk or KYC service fails
-
-### **6.6 Logging & Monitoring**
-
-- Structured logs
-- Error tracking
-- Audit logs immutable
-- Alerting for anomalies
+- (Future) Webhooks -->
 
 ---
 
 # **7. Acceptance Criteria (Entire Management System)**
 
 - All dashboards accurate to backend data
-- Risk decisions logged
 - Commission engine consistent
 - Settlement numbers reconcile
 - No unmasked sensitive fields
 - UI responsive across devices
-- Strict RBAC enforcement
-- All actions auditable
 - No broken flows
 
 ---
