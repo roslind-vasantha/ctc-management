@@ -24,7 +24,7 @@ It is formatted in **clean Markdown**, ready for GitHub/Notion, and convertible 
 The Management Application is the **central command system** for operating a production-grade Card-to-Cash fintech platform in India. It enables the management team to oversee:
 
 - onboarding
-- risk & fraud monitoring
+- risk & compliance monitoring
 - transactions
 - settlements
 - commissions
@@ -44,9 +44,7 @@ The objective is to ensure **secure**, **compliant**, **scalable**, and **profit
 - End-to-end onboarding + KYC verification
 - Production-ready transaction reporting
 - Real dispute lifecycle
-- Robust risk engine indicators
 - Revenue & commission engine
-- Audit logging
 - Regulatory compliance (RBI, PCI DSS)
 - Security controls
 - Observability (logs, alerts, analytics)
@@ -63,14 +61,8 @@ The objective is to ensure **secure**, **compliant**, **scalable**, and **profit
 # **3. User Roles**
 
 1. **Super Admin**
-2. **Management Admin**
-3. **Risk Team**
-4. **Finance Team**
-5. **Compliance Team**
-6. **Operations Team**
-7. **Auditor (Read-only)**
 
-Each role has separate permissions via RBAC.
+We only have admin in our appplication
 
 ---
 
@@ -89,7 +81,6 @@ Each role has separate permissions via RBAC.
 11. Disputes Management
 12. Credit Card Approvals
 13. Settings & Access Control
-14. Audit Logs
 15. System Alerts & Notifications
 
 ---
@@ -113,7 +104,6 @@ Provide top-level visibility into platform health, revenue, profitability, risk 
 - Yield %
 - Success Rate
 - Dispute Rate
-- Risk Score
 - Active Distributors / Retailers / Customers
 - Settlement Outstanding Amount
 - Chargeback Exposure
@@ -130,9 +120,7 @@ Provide top-level visibility into platform health, revenue, profitability, risk 
 ### **Compliance Metrics**
 
 - KYC completion %
-- Suspicious user count
 - PAN/Aadhaar match failures
-- Velocity breach attempts
 
 ### **Acceptance Criteria**
 
@@ -189,23 +177,9 @@ Monitor fraud, anomalies, sanction violations, misuse, and high-risk flows.
 
 ### **KPIs**
 
-- High-risk transactions
-- Suspicious users
 - Chargeback ratio
 - Dispute rate
-- Reversal rate
-- Fraud rule triggers
-- Device/geo anomaly count
 
-### **Risk Rules (Production-Ready)**
-
-- PAN/Aadhaar mismatch
-- Velocity breaches (amount, count, geo, IP, device)
-- Withdrawals above threshold
-- Credit card BIN blacklists
-- Repeat disputes
-- Cardholder name mismatch
-- High chargeback score
 
 ### **Charts**
 
@@ -217,7 +191,6 @@ Monitor fraud, anomalies, sanction violations, misuse, and high-risk flows.
 ### **Acceptance Criteria**
 
 - All risk rules configurable
-- 100% audit trail for decisions
 - Alerts delivered to Risk Team instantly
 
 ---
